@@ -2,9 +2,9 @@ import type { Metadata } from 'next';
 import styles from './privacy.module.css';
 
 export const metadata: Metadata = {
-  title: 'Privacy | BestOnline.Tools',
+  title: 'Privacy Policy | BestOnline.Tools',
   description:
-    'How BestOnline.Tools protects your privacy: all file processing happens locally in your browser using WebAssembly and WebGPU. No uploads, no tracking, no data collection.',
+    'BestOnline.Tools privacy policy: all file processing happens locally in your browser. We use Google Analytics for aggregate usage statistics — no personal data is tied to your files.',
 };
 
 export default function PrivacyPage() {
@@ -58,11 +58,11 @@ export default function PrivacyPage() {
               </p>
             </div>
             <div className={styles.card}>
-              <span className={styles.cardIcon}>🚫</span>
-              <h3>No Tracking</h3>
+              <span className={styles.cardIcon}>📊</span>
+              <h3>Minimal Analytics</h3>
               <p>
-                We do not use cookies, analytics trackers, or fingerprinting.
-                We do not collect personal data or build user profiles.
+                We use Google Analytics to understand aggregate usage patterns.
+                No personal data is tied to your files. You can opt out at any time.
               </p>
             </div>
           </div>
@@ -101,10 +101,71 @@ export default function PrivacyPage() {
         </section>
 
         <section className={styles.section}>
+          <h2>Analytics &amp; Cookies</h2>
+          <p>
+            We use <strong>Google Analytics 4</strong> (GA4) to collect anonymous,
+            aggregate usage statistics. This helps us understand which tools are
+            most popular, how users navigate the site, and where we should focus
+            improvements. GA4 collects:
+          </p>
+          <ul className={styles.techList}>
+            <li>Page views and navigation patterns</li>
+            <li>Tool usage events (which tool was opened, used, or downloaded from)</li>
+            <li>General device and browser information (screen size, browser version)</li>
+            <li>Approximate geographic region (country-level, derived from IP address)</li>
+          </ul>
+          <p>
+            GA4 <strong>does not</strong> have access to your files, file contents,
+            or any data you process through our tools. Your IP address is anonymized
+            by Google before storage.
+          </p>
+          <p>
+            We also use your browser&apos;s <strong>localStorage</strong> to remember
+            your recently used tools for quick navigation. This data stays entirely
+            on your device and is never sent to any server. You can clear it at any
+            time via your browser settings.
+          </p>
+          <p>
+            <strong>No other cookies or tracking technologies</strong> are used.
+            We do not use advertising cookies, retargeting pixels, or any form of
+            cross-site tracking.
+          </p>
+        </section>
+
+        <section className={styles.section}>
+          <h2>Your Rights</h2>
+          <p>
+            You have the right to:
+          </p>
+          <ul className={styles.techList}>
+            <li>
+              <strong>Opt out of analytics</strong> — Install the{' '}
+              <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">
+                Google Analytics Opt-out Browser Add-on
+              </a>, or use your browser&apos;s Do Not Track setting.
+            </li>
+            <li>
+              <strong>Clear local data</strong> — Clear your browser&apos;s localStorage
+              to remove the recently used tools history.
+            </li>
+            <li>
+              <strong>Request information</strong> — Contact us to ask what, if any,
+              data we hold about you (the answer is: none beyond aggregated analytics).
+            </li>
+          </ul>
+        </section>
+
+        <section className={styles.section}>
           <h2>Contact</h2>
           <p>
             Questions about our privacy practices? Email us at{' '}
             <a href="mailto:privacy@bestonline.tools">privacy@bestonline.tools</a>.
+          </p>
+        </section>
+
+        <section className={styles.section}>
+          <p className={styles.lastUpdated}>
+            Last updated: April 5, 2026
           </p>
         </section>
       </div>
