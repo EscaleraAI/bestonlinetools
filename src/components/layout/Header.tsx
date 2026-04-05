@@ -223,7 +223,7 @@ export default function Header() {
             )}
           </div>
 
-          <Link href={activeTools[0]?.href ?? '/'} className="btn btn-primary">
+          <Link href="/#tools" className="btn btn-primary">
             Get Started
           </Link>
         </div>

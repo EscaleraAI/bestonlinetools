@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getActiveTools } from '@/lib/tools/registry';
+import ToolIcon from '@/components/ui/ToolIcon';
 import styles from './pricing.module.css';
 
 export const metadata: Metadata = {
@@ -80,7 +81,7 @@ export default function PricingPage() {
         <div className={styles.toolsGrid}>
           {tools.map((tool) => (
             <Link key={tool.slug} href={tool.href} className={styles.toolItem}>
-              <span className={styles.toolIcon}>{tool.icon}</span>
+              <span className={styles.toolIcon}><ToolIcon name={tool.icon} size={20} /></span>
               <div>
                 <strong>{tool.name}</strong>
                 <span className={styles.toolTagline}>{tool.tagline}</span>

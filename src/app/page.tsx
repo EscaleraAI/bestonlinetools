@@ -1,4 +1,5 @@
 import ToolCard from '@/components/ui/ToolCard';
+import ToolIcon from '@/components/ui/ToolIcon';
 import { getAllTools } from '@/lib/tools/registry';
 import { websiteJsonLd } from '@/lib/seo/jsonld';
 import styles from './page.module.css';
@@ -38,11 +39,11 @@ export default function HomePage() {
             Files never leave your device.
           </p>
           <div className={styles.heroActions}>
-            <a href="/image/png-to-svg" className="btn btn-primary btn-lg">
-              Try Vectorizer →
+            <a href="#tools" className="btn btn-primary btn-lg">
+              Browse All Tools →
             </a>
-            <a href="#tools" className="btn btn-secondary btn-lg">
-              All Tools
+            <a href="/pricing" className="btn btn-secondary btn-lg">
+              Pricing
             </a>
           </div>
 
@@ -82,22 +83,26 @@ export default function HomePage() {
           {[
             {
               key: 'image',
-              title: '🖼️ Image Tools',
+              icon: 'image-down',
+              title: 'Image Tools',
               desc: 'Convert, compress, vectorize, and edit images',
             },
             {
               key: 'pdf',
-              title: '📄 PDF Tools',
+              icon: 'file-text',
+              title: 'PDF Tools',
               desc: 'Merge, split, sign, rotate, and edit PDF documents',
             },
             {
               key: 'audio',
-              title: '🎵 Audio & Media',
+              icon: 'music',
+              title: 'Audio & Media',
               desc: 'Convert audio formats and transcribe speech',
             },
             {
               key: 'data',
-              title: '⚡ Text & Developer',
+              icon: 'code',
+              title: 'Text & Developer',
               desc: 'Format, encode, generate, and compare text and data',
             },
           ].map((group) => {
@@ -106,7 +111,10 @@ export default function HomePage() {
             return (
               <div key={group.key} className={styles.toolGroup}>
                 <div className={styles.groupHeader}>
-                  <h3 className={styles.groupTitle}>{group.title}</h3>
+                  <h3 className={styles.groupTitle}>
+                    <span className={styles.groupIcon}><ToolIcon name={group.icon} size={22} /></span>
+                    {group.title}
+                  </h3>
                   <p className={styles.groupDesc}>{group.desc}</p>
                 </div>
                 <div className={styles.toolsGrid}>
