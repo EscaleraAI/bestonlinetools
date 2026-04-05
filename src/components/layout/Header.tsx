@@ -105,15 +105,15 @@ export default function Header() {
 
   // Compute locale-equivalent path for language switching
   function getLocalizedHref(targetLocale: string): string {
-    // For homepage — no localized homepage exists yet, always stay on /
+    // For homepage
     if (pathname === '/' || pathname === '') {
-      return '/';
+      return targetLocale === 'en' ? '/' : `/${targetLocale}/`;
     }
     // Use the page resolver to find the actual translated slug
     const resolved = getLocalizedPath(pathname, targetLocale as 'en' | 'de');
     if (resolved) return resolved;
-    // Fallback: homepage (page doesn't exist in target locale)
-    return '/';
+    // Fallback: homepage of target locale
+    return targetLocale === 'en' ? '/' : `/${targetLocale}/`;
   }
 
   return (
@@ -191,7 +191,7 @@ export default function Header() {
 
         {/* Right actions */}
         <div className={styles.actions}>
-          {/* Language selector */}
+          {/* Language selector — hidden until i18n is complete
           <div
             className={styles.langWrap}
             onMouseEnter={handleLangEnter}
@@ -222,6 +222,7 @@ export default function Header() {
               </div>
             )}
           </div>
+          */}
 
           <Link href="/#tools" className="btn btn-primary">
             Get Started

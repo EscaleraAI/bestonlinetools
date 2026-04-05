@@ -18,14 +18,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   for (const page of allPages) {
-    const prefix = page.locale === i18n.defaultLocale ? '' : `/${page.locale}`;
+    // Only include English pages until i18n is fully implemented
+    if (page.locale !== i18n.defaultLocale) continue;
+
     const priority = page.pageType === 'HUB' ? 0.9
                    : page.pageType === 'SPOKE' ? 0.7
                    : page.pageType === 'ALTERNATIVE' ? 0.8
                    : 0.6;
 
     entries.push({
-      url: `${SITE_URL}${prefix}/${page.slug}`,
+      url: `${SITE_URL}/${page.slug}`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority,

@@ -1,4 +1,4 @@
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { i18n, type Locale } from '@/lib/i18n';
@@ -7,6 +7,7 @@ import { getToolComponent } from '@/lib/toolRegistry';
 import { getToolBySlug, getActiveTools } from '@/lib/tools/registry';
 import { getToolContent } from '@/lib/tools/toolContent';
 import { SITE_URL } from '@/lib/seo/metadata';
+import HomeContent from '@/components/HomeContent';
 import ToolPageContent from './ToolPageContent';
 import styles from './ToolPageLayout.module.css';
 
@@ -33,6 +34,15 @@ function parseSlug(segments: string[]): { locale: Locale; slugParts: string[] } 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const { locale, slugParts } = parseSlug(slug);
+
+  // /de homepage — use default site metadata
+  if (slugParts.length === 0) {
+    return {
+      title: 'BestOnline.Tools — Kostenlose Online-Konvertierungstools',
+      description: 'Kostenlose Online-Dateikonvertierungstools. Konvertieren Sie Bilder, PDFs und Audio — alles direkt in Ihrem Browser. Schnell, privat, kein Upload erforderlich.',
+    };
+  }
+
   const page = resolveFromPath(locale, slugParts);
   if (!page) return {};
 
@@ -58,9 +68,9 @@ export default async function ToolPage({ params }: PageProps) {
   const { slug } = await params;
   const { locale, slugParts } = parseSlug(slug);
 
-  // /de with no slug → redirect to homepage (no localized homepage yet)
+  // /de with no slug → render homepage
   if (slugParts.length === 0) {
-    redirect('/');
+    return <HomeContent />;
   }
 
   const page = resolveFromPath(locale, slugParts);

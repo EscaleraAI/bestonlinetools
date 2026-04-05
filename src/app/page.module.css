@@ -226,6 +226,132 @@
   color: rgba(255, 255, 255, 0.85);
 }
 
+/* --- WHY SECTION --- */
+.whySection {
+  background: var(--color-bg);
+}
+
+.whyGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-6);
+}
+
+.whyCard {
+  padding: var(--space-8);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+}
+
+.whyIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: var(--color-primary);
+  color: #FFFFFF;
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-4);
+}
+
+.whyCard h3 {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin: 0 0 var(--space-3);
+}
+
+.whyCard p {
+  font-size: var(--text-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-fg-muted);
+  margin: 0;
+}
+
+/* --- COMPARISON TABLE --- */
+.comparisonSection {
+  background: var(--color-bg-muted);
+}
+
+.comparisonTableWrap {
+  overflow-x: auto;
+  margin-top: var(--space-6);
+}
+
+.comparisonTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.comparisonTable th,
+.comparisonTable td {
+  padding: var(--space-4) var(--space-5);
+  text-align: left;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.comparisonTable th {
+  font-weight: 700;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-fg-muted);
+  background: var(--color-bg-muted);
+}
+
+.comparisonTable th.highlighted {
+  color: var(--color-primary);
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.comparisonTable td.highlighted {
+  color: var(--color-fg);
+  font-weight: 600;
+  background: rgba(59, 130, 246, 0.03);
+}
+
+.comparisonTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* --- TECHNOLOGY SECTION --- */
+.techSection {
+  background: var(--color-bg);
+}
+
+.techGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.techCard {
+  padding: var(--space-8);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-bg);
+}
+
+.techCard h3 {
+  font-size: var(--text-base);
+  font-weight: 700;
+  margin: 0 0 var(--space-3);
+  color: var(--color-primary);
+}
+
+.techCard p {
+  font-size: var(--text-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-fg-muted);
+  margin: 0;
+}
+
 /* --- RESPONSIVE --- */
 @media (max-width: 768px) {
   .heroTitle {
@@ -237,6 +363,14 @@
   }
 
   .stepsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .whyGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .techGrid {
     grid-template-columns: 1fr;
   }
 
