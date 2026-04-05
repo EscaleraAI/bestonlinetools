@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { getActiveTools, getToolBySlug } from '@/lib/tools/registry';
+import { getLocalizedPath } from '@/lib/pageResolver';
 import { getRecentToolIds, addRecentTool } from '@/lib/recentTools';
 import { trackToolOpen } from '@/lib/analytics';
 import ToolIcon from '@/components/ui/ToolIcon';
@@ -104,20 +105,15 @@ export default function Header() {
 
   // Compute locale-equivalent path for language switching
   function getLocalizedHref(targetLocale: string): string {
-    // Strip current locale prefix to get the base path
-    let basePath = pathname;
-    if (currentLocale !== 'en') {
-      basePath = pathname.replace(`/${currentLocale}`, '') || '/';
-    }
     // For homepage
-    if (basePath === '/' || basePath === '') {
+    if (pathname === '/' || pathname === '') {
       return targetLocale === 'en' ? '/' : `/${targetLocale}/`;
     }
-    // For other pages, prepend target locale
-    if (targetLocale === 'en') {
-      return basePath;
-    }
-    return `/${targetLocale}${basePath}`;
+    // Use the page resolver to find the actual translated slug
+    const resolved = getLocalizedPath(pathname, targetLocale as 'en' | 'de');
+    if (resolved) return resolved;
+    // Fallback: homepage of target locale (page doesn't exist in target locale)
+    return targetLocale === 'en' ? '/' : `/${targetLocale}/`;
   }
 
   return (

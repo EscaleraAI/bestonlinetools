@@ -2885,6 +2885,42 @@ export function getSiblingPages(canonicalSlug: string): Array<{ locale: Locale; 
 }
 
 /**
+ * Given a pathname (e.g. "/pdf/merge" or "/de/pdf/zusammenfuehren"),
+ * find the equivalent full path in the target locale.
+ * Returns null if no equivalent page exists.
+ */
+export function getLocalizedPath(pathname: string, targetLocale: Locale): string | null {
+  // Determine current locale and slug from pathname
+  let currentLocale: Locale = 'en';
+  let slug = pathname.replace(/^\//, ''); // strip leading /
+
+  // Check if path starts with a non-EN locale prefix
+  const localeMatch = slug.match(/^(de|fr|es|it|nl|pt|pl|sv|ja)\//);
+  if (localeMatch) {
+    currentLocale = localeMatch[1] as Locale;
+    slug = slug.slice(localeMatch[1].length + 1); // strip "de/"
+  }
+
+  // Look up current page
+  const currentPage = pages[`${currentLocale}:${slug}`];
+  if (!currentPage) return null;
+
+  // If switching to same locale, return current path
+  if (targetLocale === currentLocale) return pathname;
+
+  // Find sibling in target locale via canonicalSlug
+  const siblings = getSiblingPages(currentPage.canonicalSlug);
+  const targetSibling = siblings.find(s => s.locale === targetLocale);
+  if (!targetSibling) return null;
+
+  // Build the full path
+  if (targetLocale === 'en') {
+    return `/${targetSibling.slug}`;
+  }
+  return `/${targetLocale}/${targetSibling.slug}`;
+}
+
+/**
  * Get all pages for sitemap generation.
  */
 export async function getAllPagesAsync(): Promise<Array<PageData & { slug: string }>> {
