@@ -39,7 +39,7 @@ export function createBaseMetadata(): Metadata {
   return {
     title: {
       default: `${SITE_NAME} — Free Online Conversion Tools`,
-      template: `%s | ${SITE_NAME}`,
+      template: '%s',
     },
     description:
       'Free online file conversion tools. Convert images to SVG, compress files, convert PDFs — all running in your browser. Fast, private, no upload required.',
