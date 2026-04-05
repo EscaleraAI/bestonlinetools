@@ -200,7 +200,7 @@
 
 /* --- PRIVACY BANNER --- */
 .privacyBanner {
-  background: var(--color-secondary);
+  background: #1e293b;
   color: #FFFFFF;
   padding: var(--space-16);
   border-radius: var(--radius-xl);
@@ -217,12 +217,13 @@
   font-size: var(--text-3xl);
   font-weight: 800;
   letter-spacing: -0.02em;
+  color: #FFFFFF;
 }
 
 .privacyBanner p {
   font-size: var(--text-base);
   line-height: var(--line-height-relaxed);
-  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 /* --- RESPONSIVE --- */

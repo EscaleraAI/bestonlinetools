@@ -175,7 +175,7 @@ export default function HomePage() {
                   never uploaded to any server — ensuring complete privacy and
                   near-instant processing.
                 </p>
-                <a href="/image/png-to-svg" className="btn btn-primary" style={{ marginTop: '2rem' }}>
+                <a href="#tools" className="btn btn-primary" style={{ marginTop: '2rem' }}>
                   Start Converting →
                 </a>
               </div>
