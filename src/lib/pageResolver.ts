@@ -2400,7 +2400,48 @@ const pages: Record<string, PageData> = {
     faqJson: [], defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/txt-to-pdf',
   },
 
-  // ─── JSON Formatter: HUB ───
+  // ─── DE HUBs for Text & Dev Tools ───
+  'de:werkzeuge/wort-zaehler': {
+    toolId: 'word_counter', pageType: 'HUB',
+    h1: 'Wortzähler — Wörter, Zeichen & Mehr zählen',
+    metaTitle: 'Wortzähler | Kostenlos Online',
+    metaDesc: 'Kostenloser Wortzähler. Wörter, Zeichen, Sätze, Absätze zählen. Lese- und Sprechzeit schätzen — sofort.',
+    faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos. Keine Anmeldung erforderlich.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/word-counter',
+  },
+  'de:werkzeuge/gross-kleinschreibung': {
+    toolId: 'case_converter', pageType: 'HUB',
+    h1: 'Groß-/Kleinschreibung ändern — Kostenlos Online',
+    metaTitle: 'Text Groß-/Kleinschreibung | Kostenlos',
+    metaDesc: 'Kostenloser Text-Konverter. Großbuchstaben, Kleinbuchstaben, Titelschreibweise, Satzschreibweise — sofort im Browser.',
+    faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/case-converter',
+  },
+  'de:werkzeuge/lorem-ipsum': {
+    toolId: 'lorem_ipsum', pageType: 'HUB',
+    h1: 'Lorem Ipsum Generator — Platzhaltertext',
+    metaTitle: 'Lorem Ipsum Generator | Kostenlos',
+    metaDesc: 'Kostenloser Lorem Ipsum Generator. Absätze, Sätze oder Wörter als Platzhaltertext für Designs generieren.',
+    faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/lorem-ipsum',
+  },
+  'de:werkzeuge/text-zu-pdf': {
+    toolId: 'text_to_pdf', pageType: 'HUB',
+    h1: 'Text zu PDF — Text in PDF umwandeln',
+    metaTitle: 'Text zu PDF | Kostenlos, Ohne Upload',
+    metaDesc: 'Kostenloser Text-zu-PDF-Konverter. Text eingeben, Schriftart und Größe wählen, als PDF herunterladen — 100% im Browser.',
+    faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/text-to-pdf',
+  },
+  'de:werkzeuge/json-formatierer': {
+    toolId: 'json_formatter', pageType: 'HUB',
+    h1: 'JSON Formatierer & Validator — Kostenlos Online',
+    metaTitle: 'JSON Formatierer | Kostenlos',
+    metaDesc: 'Kostenloser JSON-Formatierer, Beautifier und Validator. JSON-Daten formatieren oder minifizieren — sofort.',
+    faqJson: [{ q: 'Validiert es auch?', a: 'Ja — ungültiges JSON zeigt eine detaillierte Fehlermeldung.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/json-formatter',
+  },
+
   'en:tools/json-formatter': {
     toolId: 'json_formatter', pageType: 'HUB',
     h1: 'JSON Formatter & Validator — Free Online',
@@ -2485,6 +2526,14 @@ const pages: Record<string, PageData> = {
     ],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/color-code-converter',
   },
+  'de:werkzeuge/farbwaehler': {
+    toolId: 'color_picker', pageType: 'HUB',
+    h1: 'Farbwähler — HEX, RGB, HSL Konverter',
+    metaTitle: 'Kostenloser Farbwähler | HEX RGB HSL',
+    metaDesc: 'Kostenloser Farbwähler. Beliebige Farbe auswählen, zwischen HEX, RGB, HSL konvertieren. Sofort in die Zwischenablage kopieren.',
+    faqJson: [{ q: 'Welche Formate?', a: 'HEX, RGB, HSL und CSS-Werte.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/color-picker',
+  },
 
   // ─── URL Encoder: HUB ───
   'en:tools/url-encoder': {
@@ -2494,6 +2543,14 @@ const pages: Record<string, PageData> = {
     metaDesc: 'Free URL encoder and decoder. Encode special characters or decode percent-encoded strings instantly.',
     faqJson: [{ q: 'Is it free?', a: 'Yes, 100% free.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/url-encoder',
+  },
+  'de:werkzeuge/url-encoder': {
+    toolId: 'url_encoder', pageType: 'HUB',
+    h1: 'URL Encoder / Decoder — Kostenlos Online',
+    metaTitle: 'URL Encoder Decoder | Kostenlos',
+    metaDesc: 'Kostenloser URL-Encoder und -Decoder. Sonderzeichen kodieren oder prozent-kodierte Zeichenketten dekodieren.',
+    faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/url-encoder',
   },
 
   // ─── Base64 Text: HUB ───
@@ -2505,6 +2562,14 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Is it free?', a: 'Yes, 100% free.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/base64-text',
   },
+  'de:werkzeuge/base64-text': {
+    toolId: 'base64_text', pageType: 'HUB',
+    h1: 'Base64 Text Encoder / Decoder — Kostenlos',
+    metaTitle: 'Base64 Encoder Decoder | Kostenlos',
+    metaDesc: 'Kostenloser Base64-Encoder und -Decoder für Text. Text in Base64 kodieren oder Base64-Strings dekodieren — UTF-8.',
+    faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/base64-text',
+  },
 
   // ─── Password Generator: HUB ───
   'en:tools/password-generator': {
@@ -2514,6 +2579,14 @@ const pages: Record<string, PageData> = {
     metaDesc: 'Free password generator. Create strong, random passwords with customizable length and characters. Crypto-secure.',
     faqJson: [{ q: 'Is it secure?', a: 'Yes — uses crypto.getRandomValues().' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/password-generator',
+  },
+  'de:werkzeuge/passwort-generator': {
+    toolId: 'password_generator', pageType: 'HUB',
+    h1: 'Passwort-Generator — Sichere Passwörter erstellen',
+    metaTitle: 'Passwort-Generator | Kostenlos, Sicher',
+    metaDesc: 'Kostenloser Passwort-Generator. Starke, zufällige Passwörter mit anpassbarer Länge und Zeichen erstellen. Kryptografisch sicher.',
+    faqJson: [{ q: 'Ist es sicher?', a: 'Ja — nutzt die Web Crypto API (crypto.getRandomValues) für echte Zufälligkeit.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/password-generator',
   },
   'en:tools/strong-password-generator': {
     toolId: 'password_generator', pageType: 'SPOKE',
@@ -2563,6 +2636,14 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Is it free?', a: 'Yes, 100% free.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'pdf/rotate',
   },
+  'de:pdf/drehen': {
+    toolId: 'pdf_rotate', pageType: 'HUB',
+    h1: 'PDF-Seiten drehen — Kostenlos Online',
+    metaTitle: 'PDF-Seiten drehen | Kostenlos',
+    metaDesc: 'Kostenloser PDF-Seitenrotierer. Alle oder einzelne Seiten um 90°, 180° oder 270° drehen — ohne Upload, 100% im Browser.',
+    faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'pdf/rotate',
+  },
   'en:tools/rotate-pdf-90-degrees': {
     toolId: 'pdf_rotate', pageType: 'SPOKE',
     h1: 'Rotate PDF 90 Degrees — Fix Portrait & Landscape',
@@ -2595,6 +2676,14 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Is it free?', a: 'Yes, 100% free.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/diff-checker',
   },
+  'de:werkzeuge/text-vergleich': {
+    toolId: 'diff_checker', pageType: 'HUB',
+    h1: 'Text-Vergleich — Texte online vergleichen',
+    metaTitle: 'Text-Vergleich | Kostenlos',
+    metaDesc: 'Kostenloser Diff-Checker. Zwei Texte nebeneinander vergleichen und Ergänzungen, Löschungen und Änderungen sofort finden.',
+    faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/diff-checker',
+  },
   'en:tools/text-compare': {
     toolId: 'diff_checker', pageType: 'SPOKE',
     h1: 'Text Compare — Find Differences Between Texts',
@@ -2611,6 +2700,14 @@ const pages: Record<string, PageData> = {
     metaDesc: 'Free hash generator. Compute SHA-1, SHA-256, SHA-384, SHA-512 hashes instantly using Web Crypto API.',
     faqJson: [{ q: 'Is it secure?', a: 'Yes — uses the browser native Web Crypto API.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/hash-generator',
+  },
+  'de:werkzeuge/hash-generator': {
+    toolId: 'hash_generator', pageType: 'HUB',
+    h1: 'Hash-Generator — SHA-256, SHA-512 & Mehr',
+    metaTitle: 'Kostenloser Hash-Generator | SHA256 SHA512',
+    metaDesc: 'Kostenloser Hash-Generator. SHA-1, SHA-256, SHA-384, SHA-512 Hashes sofort berechnen mit der Web Crypto API.',
+    faqJson: [{ q: 'Ist es sicher?', a: 'Ja — nutzt die native Web Crypto API des Browsers.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/hash-generator',
   },
   'en:tools/sha256-hash-generator': {
     toolId: 'hash_generator', pageType: 'SPOKE',
@@ -2644,6 +2741,14 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'What syntax?', a: 'JavaScript/ECMAScript regex syntax.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/regex-tester',
   },
+  'de:werkzeuge/regex-tester': {
+    toolId: 'regex_tester', pageType: 'HUB',
+    h1: 'Regex-Tester — Reguläre Ausdrücke testen',
+    metaTitle: 'Regex-Tester | Kostenlos Online',
+    metaDesc: 'Kostenloser Regex-Tester. Reguläre Ausdrücke schreiben und testen mit Live-Matching und detaillierten Ergebnissen.',
+    faqJson: [{ q: 'Welche Syntax?', a: 'JavaScript/ECMAScript Regex-Syntax.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/regex-tester',
+  },
 
   // ─── CSV JSON: HUB ───
   'en:tools/csv-json': {
@@ -2653,6 +2758,14 @@ const pages: Record<string, PageData> = {
     metaDesc: 'Free CSV to JSON and JSON to CSV converter. Bidirectional conversion with proper escaping.',
     faqJson: [{ q: 'Is it free?', a: 'Yes, 100% free.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/csv-json',
+  },
+  'de:werkzeuge/csv-json': {
+    toolId: 'csv_json', pageType: 'HUB',
+    h1: 'CSV ↔ JSON Konverter — Kostenlos Online',
+    metaTitle: 'CSV zu JSON Konverter | Kostenlos',
+    metaDesc: 'Kostenloser CSV-zu-JSON und JSON-zu-CSV Konverter. Bidirektionale Konvertierung mit korrektem Escaping.',
+    faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/csv-json',
   },
   'en:tools/csv-to-json': {
     toolId: 'csv_json', pageType: 'SPOKE',
@@ -2685,6 +2798,14 @@ const pages: Record<string, PageData> = {
     metaDesc: 'Free Markdown to HTML and HTML to Markdown converter. Bidirectional, no dependencies.',
     faqJson: [{ q: 'Is it free?', a: 'Yes, 100% free.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/markdown-html',
+  },
+  'de:werkzeuge/markdown-html': {
+    toolId: 'markdown_html', pageType: 'HUB',
+    h1: 'Markdown ↔ HTML Konverter — Kostenlos',
+    metaTitle: 'Markdown zu HTML Konverter | Kostenlos',
+    metaDesc: 'Kostenloser Markdown-zu-HTML und HTML-zu-Markdown Konverter. Bidirektional, ohne Abhängigkeiten.',
+    faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos.' }],
+    defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/markdown-html',
   },
   'en:tools/markdown-to-html': {
     toolId: 'markdown_html', pageType: 'SPOKE',

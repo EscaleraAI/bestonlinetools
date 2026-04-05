@@ -59,11 +59,30 @@ interface PageEntry {
 
 async function main() {
   console.log('📦 Creating table...');
-  await sql(CREATE_TABLE);
+  await sql`
+    CREATE TABLE IF NOT EXISTS pseo_pages (
+      id              SERIAL PRIMARY KEY,
+      locale          VARCHAR(5) NOT NULL DEFAULT 'en',
+      slug            TEXT NOT NULL,
+      tool_id         TEXT NOT NULL,
+      page_type       VARCHAR(20) NOT NULL,
+      h1              TEXT NOT NULL,
+      meta_title      TEXT NOT NULL,
+      meta_desc       TEXT NOT NULL,
+      faq_json        JSONB DEFAULT '[]',
+      default_config  JSONB DEFAULT '{}',
+      canonical_slug  TEXT NOT NULL,
+      created_at      TIMESTAMPTZ DEFAULT NOW(),
+      updated_at      TIMESTAMPTZ DEFAULT NOW(),
+      UNIQUE(locale, slug)
+    )
+  `;
+  await sql`CREATE INDEX IF NOT EXISTS idx_pseo_locale_slug ON pseo_pages(locale, slug)`;
+  await sql`CREATE INDEX IF NOT EXISTS idx_pseo_tool_id ON pseo_pages(tool_id)`;
 
   // Dynamically read the JSON pages from pageResolver
   // Since we can't use path aliases in scripts, we read the module relatively
-  const { getAllPages } = await import('../src/lib/pageResolver.js');
+  const { getAllPages } = await import('../src/lib/pageResolver.ts');
   const allPages = getAllPages();
 
   console.log(`📄 Found ${allPages.length} pages to seed`);

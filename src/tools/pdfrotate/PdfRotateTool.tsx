@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, degrees } from 'pdf-lib';
 import ToolIcon from '@/components/ui/ToolIcon';
 import styles from './PdfRotateTool.module.css';
 
@@ -52,7 +52,7 @@ export default function PdfRotateTool() {
       for (const idx of targetPages) {
         const page = pages[idx];
         const currentRotation = page.getRotation().angle;
-        page.setRotation({ type: 0, angle: currentRotation + rotation });
+        page.setRotation(degrees(currentRotation + rotation));
       }
 
       const outBytes = await pdf.save();

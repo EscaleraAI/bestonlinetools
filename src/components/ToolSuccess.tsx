@@ -6,9 +6,10 @@
  * and navigates to the target tool.
  */
 
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFileStore, toHandoffFile } from '@/lib/useFileStore';
+import { trackToolUsed, trackDownload } from '@/lib/analytics';
 import styles from './ToolSuccess.module.css';
 
 export interface CrossToolLink {
@@ -40,6 +41,16 @@ export default function ToolSuccess({
   const router = useRouter();
   const setFiles = useFileStore((s) => s.setFiles);
 
+  // Track successful tool usage
+  useEffect(() => {
+    trackToolUsed(sourceTool, { file_count: String(outputFiles.length) });
+  }, [sourceTool, outputFiles.length]);
+
+  const handleDownload = useCallback(() => {
+    trackDownload(sourceTool);
+    onDownload();
+  }, [sourceTool, onDownload]);
+
   const handleCrossLink = useCallback(
     async (href: string) => {
       // Convert output files to handoff format and save to store
@@ -63,7 +74,7 @@ export default function ToolSuccess({
           : `${outputFiles.length} files processed successfully!`}
       </h3>
 
-      <button className={styles.downloadButton} onClick={onDownload}>
+      <button className={styles.downloadButton} onClick={handleDownload}>
         ⬇️ Download
       </button>
 

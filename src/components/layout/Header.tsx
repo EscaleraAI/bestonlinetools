@@ -4,7 +4,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { getActiveTools } from '@/lib/tools/registry';
+import { getActiveTools, getToolBySlug } from '@/lib/tools/registry';
+import { getRecentToolIds, addRecentTool } from '@/lib/recentTools';
+import { trackToolOpen } from '@/lib/analytics';
 import ToolIcon from '@/components/ui/ToolIcon';
 import styles from './Header.module.css';
 
@@ -31,14 +33,35 @@ const LANGUAGES = [
   // { code: 'ja', label: '日本語', flag: '🇯🇵' },
 ];
 
+/** Max recent tools to show in the header */
+const MAX_RECENT_DISPLAY = 3;
+
 export default function Header() {
   const pathname = usePathname();
   const activeTools = getActiveTools();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [langOpen, setLangOpen] = useState(false);
+  const [recentToolIds, setRecentToolIds] = useState<string[]>([]);
   const dropdownTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const langTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Load recent tools from localStorage on mount + route change
+  useEffect(() => {
+    setRecentToolIds(getRecentToolIds());
+  }, [pathname]);
+
+  // Track tool_open and add to recent tools when visiting a tool page
+  useEffect(() => {
+    const allActive = getActiveTools();
+    const currentTool = allActive.find((t) => t.href === pathname);
+    if (currentTool) {
+      trackToolOpen(currentTool.slug, 'tool');
+      addRecentTool(currentTool.slug);
+      setRecentToolIds(getRecentToolIds());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   // Close dropdowns on route change
   useEffect(() => {
@@ -46,6 +69,12 @@ export default function Header() {
     setLangOpen(false);
     setMenuOpen(false);
   }, [pathname]);
+
+  // Resolve recent tool IDs to full tool definitions
+  const recentTools = recentToolIds
+    .map((id) => getToolBySlug(id))
+    .filter((t): t is NonNullable<typeof t> => t != null)
+    .slice(0, MAX_RECENT_DISPLAY);
 
   function handleMouseEnter(group: string) {
     if (dropdownTimer.current) clearTimeout(dropdownTimer.current);
@@ -146,6 +175,24 @@ export default function Header() {
           })}
         </nav>
 
+          {/* Recent tools — only shown when user has history */}
+          {recentTools.length > 0 && (
+            <div className={styles.recentTools}>
+              <span className={styles.recentLabel}>Recent:</span>
+              {recentTools.map((tool) => (
+                <Link
+                  key={tool.slug}
+                  href={tool.href}
+                  className={`${styles.recentPill} ${pathname === tool.href ? styles.recentPillActive : ''}`}
+                  title={tool.name}
+                >
+                  <ToolIcon name={tool.icon} size={13} />
+                  <span>{tool.name}</span>
+                </Link>
+              ))}
+            </div>
+          )}
+
         {/* Right actions */}
         <div className={styles.actions}>
           {/* Language selector */}
@@ -200,6 +247,23 @@ export default function Header() {
       {/* Mobile menu */}
       {menuOpen && (
         <nav className={styles.mobileMenu}>
+          {/* Recent tools in mobile menu */}
+          {recentTools.length > 0 && (
+            <div className={styles.mobileGroup}>
+              <span className={styles.mobileGroupLabel}>⏱ Recent</span>
+              {recentTools.map((tool) => (
+                <Link
+                  key={tool.slug}
+                  href={tool.href}
+                  className={`${styles.mobileLink} ${pathname === tool.href ? styles.active : ''}`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <ToolIcon name={tool.icon} size={16} className={styles.navIcon} />
+                  {tool.name}
+                </Link>
+              ))}
+            </div>
+          )}
           {NAV_GROUPS.map((group) => {
             const groupTools = activeTools.filter(t => t.category === group.category);
             return (
