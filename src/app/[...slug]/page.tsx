@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { i18n, type Locale } from '@/lib/i18n';
@@ -58,7 +58,10 @@ export default async function ToolPage({ params }: PageProps) {
   const { slug } = await params;
   const { locale, slugParts } = parseSlug(slug);
 
-  if (slugParts.length === 0) notFound();
+  // /de with no slug → redirect to homepage (no localized homepage yet)
+  if (slugParts.length === 0) {
+    redirect('/');
+  }
 
   const page = resolveFromPath(locale, slugParts);
   if (!page) notFound();

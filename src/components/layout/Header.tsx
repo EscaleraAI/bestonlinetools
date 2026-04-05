@@ -105,15 +105,15 @@ export default function Header() {
 
   // Compute locale-equivalent path for language switching
   function getLocalizedHref(targetLocale: string): string {
-    // For homepage
+    // For homepage — no localized homepage exists yet, always stay on /
     if (pathname === '/' || pathname === '') {
-      return targetLocale === 'en' ? '/' : `/${targetLocale}/`;
+      return '/';
     }
     // Use the page resolver to find the actual translated slug
     const resolved = getLocalizedPath(pathname, targetLocale as 'en' | 'de');
     if (resolved) return resolved;
-    // Fallback: homepage of target locale (page doesn't exist in target locale)
-    return targetLocale === 'en' ? '/' : `/${targetLocale}/`;
+    // Fallback: homepage (page doesn't exist in target locale)
+    return '/';
   }
 
   return (
