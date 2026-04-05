@@ -1,0 +1,36 @@
+import { MetadataRoute } from 'next';
+import { i18n } from '@/lib/i18n';
+import { getAllPages } from '@/lib/pageResolver';
+
+const SITE_URL = 'https://bestonline.tools';
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  const allPages = getAllPages();
+
+  const entries: MetadataRoute.Sitemap = [
+    // Homepage
+    {
+      url: SITE_URL,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 1,
+    },
+  ];
+
+  for (const page of allPages) {
+    const prefix = page.locale === i18n.defaultLocale ? '' : `/${page.locale}`;
+    const priority = page.pageType === 'HUB' ? 0.9
+                   : page.pageType === 'SPOKE' ? 0.7
+                   : page.pageType === 'ALTERNATIVE' ? 0.8
+                   : 0.6;
+
+    entries.push({
+      url: `${SITE_URL}${prefix}/${page.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority,
+    });
+  }
+
+  return entries;
+}

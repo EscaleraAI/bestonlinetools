@@ -1,0 +1,112 @@
+'use client';
+
+import {
+  Sparkles,
+  Wand2,
+  FilePlus2,
+  Scissors,
+  Minimize2,
+  Palette,
+  Music,
+  Mic,
+  RefreshCw,
+  Lock,
+  Zap,
+  Shield,
+  Globe,
+  ChevronDown,
+  Upload,
+  ImagePlus,
+  FileOutput,
+  ImageDown,
+  Paintbrush,
+  ArrowLeftRight,
+  ArrowLeft,
+  FileText,
+  Check,
+  Droplets,
+  Hash,
+  Maximize,
+  Code,
+  Film,
+  QrCode,
+  FileImage,
+  ScanText,
+  PenTool,
+  ClipboardList,
+  AlignLeft,
+  CaseSensitive,
+  TextCursorInput,
+  KeyRound,
+  RotateCw,
+  Unlock,
+  Braces,
+  Link,
+  Binary,
+  Diff,
+  type LucideIcon,
+} from 'lucide-react';
+
+const iconMap: Record<string, LucideIcon> = {
+  sparkles: Sparkles,
+  wand: Wand2,
+  'file-plus': FilePlus2,
+  scissors: Scissors,
+  minimize: Minimize2,
+  palette: Palette,
+  music: Music,
+  mic: Mic,
+  'refresh-cw': RefreshCw,
+  lock: Lock,
+  zap: Zap,
+  shield: Shield,
+  globe: Globe,
+  'chevron-down': ChevronDown,
+  upload: Upload,
+  'image-plus': ImagePlus,
+  'file-output': FileOutput,
+  'image-down': ImageDown,
+  paintbrush: Paintbrush,
+  'arrow-left-right': ArrowLeftRight,
+  'arrow-left': ArrowLeft,
+  'file-text': FileText,
+  check: Check,
+  droplets: Droplets,
+  hash: Hash,
+  maximize: Maximize,
+  code: Code,
+  film: Film,
+  'qr-code': QrCode,
+  'file-image': FileImage,
+  'scan-text': ScanText,
+  'pen-tool': PenTool,
+  'clipboard-list': ClipboardList,
+  'align-left': AlignLeft,
+  'case-sensitive': CaseSensitive,
+  'text-cursor-input': TextCursorInput,
+  'key-round': KeyRound,
+  'rotate-cw': RotateCw,
+  unlock: Unlock,
+  braces: Braces,
+  link: Link,
+  binary: Binary,
+  diff: Diff,
+};
+
+interface ToolIconProps {
+  name: string;
+  size?: number;
+  className?: string;
+  strokeWidth?: number;
+}
+
+export default function ToolIcon({
+  name,
+  size = 20,
+  className,
+  strokeWidth = 2,
+}: ToolIconProps) {
+  const Icon = iconMap[name];
+  if (!Icon) return null;
+  return <Icon size={size} className={className} strokeWidth={strokeWidth} />;
+}

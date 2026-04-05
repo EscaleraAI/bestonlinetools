@@ -1,0 +1,243 @@
+/* ============================================
+   Homepage — Flat Design System (Clean)
+   ============================================ */
+
+/* --- HERO --- */
+.hero {
+  background: var(--color-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle decorative circle */
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -15%;
+  width: 600px;
+  height: 600px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.heroContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: var(--space-20) var(--space-6) var(--space-16);
+  max-width: var(--max-width);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.heroTitle {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: var(--space-6);
+  color: #FFFFFF;
+}
+
+.heroAccent {
+  color: var(--color-accent);
+}
+
+.heroSubtitle {
+  font-size: var(--text-lg);
+  color: rgba(255, 255, 255, 0.8);
+  max-width: 50ch;
+  margin-bottom: var(--space-8);
+  line-height: var(--line-height-relaxed);
+}
+
+.heroActions {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-10);
+}
+
+/* --- Stats Row --- */
+.statsRow {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.statPill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-full);
+  color: #FFFFFF;
+}
+
+.statValue {
+  font-weight: 700;
+  font-size: var(--text-sm);
+}
+
+.statLabel {
+  font-size: var(--text-xs);
+  opacity: 0.8;
+  font-weight: 500;
+}
+
+/* --- SECTION HEADERS --- */
+.sectionHeader {
+  margin-bottom: var(--space-10);
+}
+
+.sectionHeader h2 {
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--space-3);
+}
+
+.sectionHeader p {
+  font-size: var(--text-base);
+  color: var(--color-fg-muted);
+  max-width: 50ch;
+  line-height: var(--line-height-relaxed);
+}
+
+/* --- TOOLS GRID --- */
+.toolsSection {
+  background: var(--color-bg-muted);
+}
+
+.toolGroup {
+  margin-bottom: var(--space-12);
+}
+
+.toolGroup:last-child {
+  margin-bottom: 0;
+}
+
+.groupHeader {
+  margin-bottom: var(--space-5);
+  padding-bottom: var(--space-3);
+  border-bottom: 2px solid var(--color-border);
+}
+
+.groupTitle {
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: var(--color-fg);
+  margin: 0 0 var(--space-1);
+  letter-spacing: -0.01em;
+}
+
+.groupDesc {
+  font-size: var(--text-sm);
+  color: var(--color-fg-muted);
+  margin: 0;
+}
+
+.toolsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+}
+
+/* --- METHOD / STEPS --- */
+.methodSection {
+  /* neutral bg */
+}
+
+.stepsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-6);
+}
+
+.step {
+  padding: var(--space-8);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.stepNumber {
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  color: var(--color-primary);
+  margin-bottom: var(--space-4);
+  opacity: 0.3;
+}
+
+.step h3 {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.step p {
+  font-size: var(--text-sm);
+  color: var(--color-fg-muted);
+  line-height: var(--line-height-relaxed);
+}
+
+/* --- PRIVACY BANNER --- */
+.privacyBanner {
+  background: var(--color-secondary);
+  color: #FFFFFF;
+  padding: var(--space-16);
+  border-radius: var(--radius-xl);
+}
+
+.privacyGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-10);
+  align-items: center;
+}
+
+.privacyBanner h2 {
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.privacyBanner p {
+  font-size: var(--text-base);
+  line-height: var(--line-height-relaxed);
+  opacity: 0.9;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 2rem;
+  }
+
+  .toolsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .stepsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .privacyGrid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .statsRow {
+    gap: var(--space-2);
+  }
+
+  .statPill {
+    font-size: var(--text-xs);
+    padding: var(--space-1) var(--space-3);
+  }
+}

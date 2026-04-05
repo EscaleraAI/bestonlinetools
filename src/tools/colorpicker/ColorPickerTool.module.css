@@ -1,0 +1,18 @@
+.container { width: 100%; max-width: 800px; margin: 0 auto; }
+.layout { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-6); align-items: start; }
+.pickerCol { display: flex; flex-direction: column; gap: var(--space-4); }
+.swatchBox { width: 100%; height: 200px; border-radius: var(--radius-lg); cursor: pointer; border: 1px solid var(--color-border); transition: all var(--transition-fast); position: relative; }
+.hiddenPicker { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+.hexField { }
+.label { display: block; font-size: var(--text-xs); font-weight: 600; color: var(--color-fg-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--space-1); }
+.input { width: 100%; padding: var(--space-2) var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-sm); font-size: var(--text-sm); color: var(--color-fg); background: var(--color-bg); font-family: 'Courier New', monospace; }
+.input:focus { outline: none; border-color: var(--color-primary); }
+.rgbFields { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--space-2); }
+.rgbField { }
+.formatsCol { display: flex; flex-direction: column; gap: var(--space-3); }
+.formatRow { display: flex; align-items: center; gap: var(--space-3); padding: var(--space-3) var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+.formatLabel { font-size: var(--text-xs); font-weight: 700; color: var(--color-fg-muted); text-transform: uppercase; min-width: 36px; }
+.formatValue { flex: 1; font-size: var(--text-sm); font-weight: 600; color: var(--color-fg); font-family: 'Courier New', monospace; }
+.copyBtn { padding: var(--space-1) var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-bg); cursor: pointer; font-size: var(--text-xs); font-weight: 600; color: var(--color-fg); transition: all var(--transition-fast); min-width: 48px; }
+.copyBtn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+@media (max-width: 640px) { .layout { grid-template-columns: 1fr; } }

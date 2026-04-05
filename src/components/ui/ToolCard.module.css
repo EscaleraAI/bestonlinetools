@@ -1,0 +1,133 @@
+.link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  padding: var(--space-6);
+  background: var(--color-bg);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+  cursor: pointer;
+}
+
+.card:hover {
+  transform: scale(1.02);
+  background: var(--color-bg-muted);
+}
+
+.card:hover .arrow {
+  transform: translateX(4px);
+  color: var(--color-primary);
+}
+
+.card:hover .iconWrap {
+  transform: scale(1.1);
+}
+
+.card.comingSoon {
+  cursor: default;
+  opacity: 0.4;
+}
+
+.card.comingSoon:hover {
+  transform: none;
+  background: var(--color-bg);
+}
+
+.iconWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: var(--color-blue-50);
+  color: var(--color-primary);
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.title {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-fg);
+  letter-spacing: -0.01em;
+  transition: color var(--transition-fast);
+}
+
+.badge {
+  font-size: 0.65rem;
+  padding: 2px 8px;
+  background: var(--color-primary);
+  color: #FFFFFF;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.02em;
+}
+
+.tagline {
+  font-size: var(--text-sm);
+  color: var(--color-fg-muted);
+  margin: 0;
+  transition: color var(--transition-fast);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.category {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-fg-muted);
+  font-weight: 600;
+  transition: color var(--transition-fast);
+}
+
+.clientSide {
+  font-size: var(--text-xs);
+  color: var(--color-secondary);
+  font-weight: 600;
+  transition: color var(--transition-fast);
+}
+
+.arrow {
+  font-size: var(--text-xl);
+  color: var(--color-fg-muted);
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .card {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .arrow {
+    display: none;
+  }
+}

@@ -1,0 +1,25 @@
+.container { width: 100%; max-width: 800px; margin: 0 auto; }
+.statsBar {
+  display: flex; flex-wrap: wrap; gap: var(--space-2);
+  padding: var(--space-4); background: var(--color-bg-muted);
+  border-radius: var(--radius-lg); margin-bottom: var(--space-4);
+}
+.stat { flex: 1; min-width: 80px; text-align: center; padding: var(--space-2); }
+.statValue { display: block; font-size: var(--text-2xl); font-weight: 800; color: var(--color-primary); }
+.statLabel { font-size: var(--text-xs); font-weight: 600; color: var(--color-fg-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.textArea {
+  width: 100%; border: 1px solid var(--color-border); border-radius: var(--radius-lg);
+  padding: var(--space-5); font-size: var(--text-base); line-height: 1.7;
+  color: var(--color-fg); background: var(--color-bg); resize: vertical; font-family: inherit;
+}
+.textArea:focus { outline: none; border-color: var(--color-primary); }
+.actionBar { display: flex; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-3); }
+.clearBtn, .copyBtn {
+  padding: var(--space-2) var(--space-5); border: 1px solid var(--color-border);
+  border-radius: var(--radius-md); background: var(--color-bg); cursor: pointer;
+  font-size: var(--text-sm); font-weight: 600; color: var(--color-fg);
+  transition: all var(--transition-fast);
+}
+.clearBtn:hover { border-color: var(--color-danger); color: var(--color-danger); }
+.copyBtn:hover { border-color: var(--color-primary); color: var(--color-primary); }
+@media (max-width: 640px) { .stat { min-width: 60px; } .statValue { font-size: var(--text-lg); } }

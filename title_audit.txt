@@ -1,0 +1,100 @@
+﻿| 79 | `en:image/format-converter` | Image Converter | HEIC, WebP, AVIF to JPG, PNG | Free Online | BestOnline.Tools |
+| 76 | `en:image/remove-background` | Remove Background from Image | Free, Unlimited, No Signup | BestOnline.Tools |
+| 75 | `de:alternativen/iloveimg-kostenlose-alternative` | iLoveIMG kostenlose Alternative | Privater Bildkonverter | BestOnline.Tools |
+| 75 | `de:bild/format-konverter` | Bildkonverter | HEIC, WebP, AVIF zu JPG, PNG | Kostenlos | BestOnline.Tools |
+| 73 | `de:bild/hintergrund-entfernen` | Hintergrund entfernen aus Bild | Kostenlos, Unbegrenzt | BestOnline.Tools |
+| 72 | `de:alternativen/vectorizer-ai-kostenlose-alternative` | Vectorizer.ai Kostenlose Alternative | Ohne Anmeldung | BestOnline.Tools |
+| 71 | `en:tools/convert-sketch-to-svg` | Convert Sketch to SVG | Free Illustration Vectorizer | BestOnline.Tools |
+| 70 | `en:audio/convert-audio` | Audio Converter Online | Free, Unlimited, No Upload | BestOnline.Tools |
+| 70 | `en:pdf/merge` | Merge PDF Files Online | Free, Unlimited, No Signup | BestOnline.Tools |
+| 70 | `en:alternatives/iloveimg-free-alternative` | iLoveIMG Free Alternative | Private Image Converter | BestOnline.Tools |
+| 70 | `en:image/compress-image` | Compress Images Online | Free, Unlimited, No Signup | BestOnline.Tools |
+| 69 | `en:tools/convert-photo-to-svg` | Convert Photo to SVG | Free Online Photo to Vector | BestOnline.Tools |
+| 69 | `en:alternatives/remove-bg-free-alternative` | remove.bg Free Alternative | No Credits, No Limits | BestOnline.Tools |
+| 68 | `en:tools/convert-logo-to-svg` | Convert Logo to SVG | Free Online Logo Vectorizer | BestOnline.Tools |
+| 68 | `en:alternatives/convertio-free-alternative` | Convertio Free Alternative | No Upload, No Limits | BestOnline.Tools |
+| 67 | `de:bild/png-zu-svg` | PNG zu SVG Konverter | Kostenlos, Privat, Sofort | BestOnline.Tools |
+| 67 | `en:tools/convert-heic-to-jpg` | HEIC to JPG Converter | Free, Private, No Upload | BestOnline.Tools |
+| 67 | `en:tools/convert-avif-to-jpg` | AVIF to JPG Converter | Free, Private, No Upload | BestOnline.Tools |
+| 67 | `en:tools/convert-webp-to-jpg` | WebP to JPG Converter | Free, Private, No Upload | BestOnline.Tools |
+| 66 | `en:tools/remove-background-from-photo` | Remove Background from Photo | Free, AI-Powered | BestOnline.Tools |
+| 66 | `de:alternativen/colorbliss-kostenlose-alternative` | ColorBliss kostenlose Alternative | Ohne Limits | BestOnline.Tools |
+| 66 | `en:tools/convert-webp-to-png` | WebP to PNG Converter | Free, Lossless, Private | BestOnline.Tools |
+| 65 | `en:image/photo-to-coloring-page` | Photo to Coloring Page | Free Online Converter | BestOnline.Tools |
+| 65 | `en:tools/ecommerce-background-remover` | E-Commerce Background Remover | Product Photos | BestOnline.Tools |
+| 65 | `de:alternativen/convertio-kostenlose-alternative` | Convertio kostenlose Alternative | Ohne Upload | BestOnline.Tools |
+| 65 | `de:werkzeuge/webp-zu-png-konvertieren` | WebP zu PNG Konverter | Kostenlos, Verlustfrei | BestOnline.Tools |
+| 65 | `de:alternativen/remove-bg-kostenlose-alternative` | remove.bg kostenlose Alternative | Ohne Limits | BestOnline.Tools |
+| 64 | `de:alternativen/ilovepdf-kostenlose-alternative` | iLovePDF kostenlose Alternative | Ohne Limits | BestOnline.Tools |
+| 64 | `en:image/png-to-svg` | PNG to SVG Converter | Free, Private, Instant | BestOnline.Tools |
+| 64 | `de:audio/sprache-zu-text` | Sprache zu Text | Kostenlose KI-Transkription | BestOnline.Tools |
+| 64 | `en:tools/turn-photo-into-coloring-page` | Turn Photo Into Coloring Page | Free for Kids | BestOnline.Tools |
+| 64 | `de:werkzeuge/hintergrund-von-produktfoto-entfernen` | Produktfoto Hintergrund entfernen | Kostenlos | BestOnline.Tools |
+| 63 | `de:bild/foto-als-ausmalbild` | Foto als Ausmalbild | Kostenlos, Ohne Upload | BestOnline.Tools |
+| 63 | `en:tools/create-coloring-book-pages-for-kdp` | Coloring Book Pages for KDP | Free Generator | BestOnline.Tools |
+| 63 | `de:alternativen/tinypng-kostenlose-alternative` | TinyPNG kostenlose Alternative | Ohne Limits | BestOnline.Tools |
+| 63 | `de:alternativen/smallpdf-kostenlose-alternative` | Smallpdf kostenlose Alternative | Unbegrenzt | BestOnline.Tools |
+| 62 | `de:bild/bild-komprimieren` | Bilder komprimieren | Kostenlos, Unbegrenzt | BestOnline.Tools |
+| 62 | `en:tools/transparent-background-maker` | Transparent Background Maker | Free AI Tool | BestOnline.Tools |
+| 62 | `de:pdf/passwort-schuetzen` | PDF Passwortschutz | Kostenlos, Kein Upload | BestOnline.Tools |
+| 62 | `en:tools/join-pdf-documents` | Join PDF Documents | Free Online PDF Joiner | BestOnline.Tools |
+| 62 | `de:pdf/zusammenfuehren` | PDF zusammenfÃ¼hren | Kostenlos, Unbegrenzt | BestOnline.Tools |
+| 61 | `de:alternativen/crayola-ausmalbild-kostenlose-alternative` | Crayola Ausmalbild Alternative | Kostenlos | BestOnline.Tools |
+| 61 | `en:tools/transcribe-audio-to-text` | Transcribe Audio to Text | Free, No Upload | BestOnline.Tools |
+| 61 | `en:alternatives/vectorizer-ai-free-alternative` | Vectorizer.ai Free Alternative | No Signup | BestOnline.Tools |
+| 61 | `de:werkzeuge/hintergrund-von-portrait-entfernen` | Portrait Hintergrund entfernen | Kostenlos | BestOnline.Tools |
+| 60 | `de:werkzeuge/avif-zu-jpg-konvertieren` | AVIF zu JPG Konverter | Kostenlos, Privat | BestOnline.Tools |
+| 60 | `en:tools/remove-background-from-portrait` | Remove Portrait Background | Free AI Tool | BestOnline.Tools |
+| 60 | `de:werkzeuge/heic-zu-jpg-konvertieren` | HEIC zu JPG Konverter | Kostenlos, Privat | BestOnline.Tools |
+| 60 | `de:werkzeuge/unterschrift-in-svg-umwandeln` | Unterschrift in SVG umwandeln | Kostenlos | BestOnline.Tools |
+| 60 | `de:werkzeuge/webp-zu-jpg-konvertieren` | WebP zu JPG Konverter | Kostenlos, Privat | BestOnline.Tools |
+| 60 | `en:tools/photo-to-line-art` | Photo to Line Art | Free Online Converter | BestOnline.Tools |
+| 60 | `en:alternatives/cloudconvert-free-alternative` | CloudConvert Free Alternative | No Limits | BestOnline.Tools |
+| 59 | `en:alternatives/crayola-coloring-page-free-alternative` | Crayola Coloring Page Alternative | Free | BestOnline.Tools |
+| 59 | `en:tools/reduce-image-file-size` | Reduce Image File Size | Free, No Upload | BestOnline.Tools |
+| 59 | `de:werkzeuge/pdf-sperren` | PDF sperren | Kostenloser Passwortschutz | BestOnline.Tools |
+| 59 | `en:tools/photos-to-pdf` | Photos to PDF | Free Photo Album Creator | BestOnline.Tools |
+| 58 | `en:alternatives/colorbliss-free-alternative` | ColorBliss Free Alternative | No Limits | BestOnline.Tools |
+| 58 | `de:audio/audio-konvertieren` | Audio Konverter | Kostenlos, Unbegrenzt | BestOnline.Tools |
+| 58 | `de:werkzeuge/ausmalbuch-seiten-erstellen` | Ausmalbuch-Seiten erstellen | Kostenlos | BestOnline.Tools |
+| 58 | `de:werkzeuge/pdf-dateien-zusammenfuehren` | PDF-Dateien zusammenfÃ¼hren | Kostenlos | BestOnline.Tools |
+| 58 | `en:tools/audio-to-srt-subtitles` | Audio to SRT Subtitles | Free Generator | BestOnline.Tools |
+| 58 | `de:werkzeuge/bilddateigroesse-reduzieren` | BilddateigrÃ¶ÃŸe reduzieren | Kostenlos | BestOnline.Tools |
+| 57 | `en:audio/speech-to-text` | Speech to Text | Free AI Transcription | BestOnline.Tools |
+| 57 | `de:pdf/bilder-zu-pdf` | Bilder zu PDF | Kostenlos, Kein Upload | BestOnline.Tools |
+| 57 | `en:tools/remove-background-from-product-photo` | Remove Product Photo Background | Free | BestOnline.Tools |
+| 57 | `de:werkzeuge/pdf-verschluesseln` | PDF verschlÃ¼sseln | Kostenlos, Privat | BestOnline.Tools |
+| 57 | `en:tools/convert-signature-to-svg` | Convert Signature to SVG | Free Online | BestOnline.Tools |
+| 57 | `en:pdf/password-protect` | PDF Password Protect | Free, No Upload | BestOnline.Tools |
+| 57 | `en:tools/encrypt-pdf` | Encrypt PDF | Free, Private, No Upload | BestOnline.Tools |
+| 57 | `en:tools/merge-pdf-files-online` | Merge PDF Files Online | Free, Private | BestOnline.Tools |
+| 57 | `en:alternatives/squoosh-free-alternative` | Squoosh Alternative with Batch Support | BestOnline.Tools |
+| 56 | `en:tools/separate-pdf-pages` | Separate PDF Pages | Free Online Tool | BestOnline.Tools |
+| 56 | `en:tools/combine-images-into-pdf` | Combine Images into PDF | Free Online | BestOnline.Tools |
+| 56 | `en:tools/compress-png-online` | Compress PNG Online | Free, No Upload | BestOnline.Tools |
+| 56 | `en:tools/password-protect-pdf-free` | Password Protect PDF Free | No Upload | BestOnline.Tools |
+| 56 | `en:tools/compress-jpg-online` | Compress JPG Online | Free, Unlimited | BestOnline.Tools |
+| 56 | `en:alternatives/smallpdf-free-alternative` | Smallpdf Free Alternative | Unlimited | BestOnline.Tools |
+| 56 | `en:alternatives/otter-ai-free-alternative` | Otter.ai Free Alternative | No Limits | BestOnline.Tools |
+| 56 | `en:tools/merge-pdf-free` | Merge PDF Free | No Limits, No Upload | BestOnline.Tools |
+| 56 | `en:alternatives/ilovepdf-free-alternative` | iLovePDF Free Alternative | No Limits | BestOnline.Tools |
+| 55 | `en:tools/transcribe-podcast-free` | Transcribe Podcast Free | Whisper AI | BestOnline.Tools |
+| 55 | `de:werkzeuge/audio-zu-srt-untertitel` | Audio zu SRT-Untertiteln | Kostenlos | BestOnline.Tools |
+| 55 | `en:alternatives/tinypng-free-alternative` | TinyPNG Free Alternative | No Limits | BestOnline.Tools |
+| 55 | `en:tools/make-image-transparent` | Make Image Transparent Online | Free | BestOnline.Tools |
+| 55 | `en:tools/convert-wav-to-mp3` | Convert WAV to MP3 | Free, No Upload | BestOnline.Tools |
+| 55 | `en:tools/convert-mp3-to-wav` | Convert MP3 to WAV | Free, Unlimited | BestOnline.Tools |
+| 54 | `de:werkzeuge/foto-zu-strichzeichnung` | Foto zu Strichzeichnung | Kostenlos | BestOnline.Tools |
+| 54 | `en:tools/divide-pdf-into-pages` | Divide PDF Into Pages | Free Online | BestOnline.Tools |
+| 54 | `en:tools/qr-code-generator` | QR Code Generator | Free, No Upload | BestOnline.Tools |
+| 54 | `en:tools/combine-pdfs-into-one` | Combine PDFs Into One | Free Online | BestOnline.Tools |
+| 54 | `en:tools/secure-pdf-online` | Secure PDF Online | Free Encryption | BestOnline.Tools |
+| 54 | `en:tools/add-password-to-pdf` | Add Password to PDF | Free, Private | BestOnline.Tools |
+| 54 | `en:tools/lock-pdf` | Lock PDF | Free Password Protection | BestOnline.Tools |
+| 54 | `en:image/ocr` | OCR Image to Text | Free, No Upload | BestOnline.Tools |
+| 54 | `de:alternativen/cloudconvert-kostenlose-alternative` | CloudConvert kostenlose Alternative | BestOnline.Tools |
+| 54 | `en:tools/combine-pdf-files` | Combine PDF Files | Free, No Upload | BestOnline.Tools |
+| 54 | `de:werkzeuge/bild-transparent-machen` | Bild transparent machen | Kostenlos | BestOnline.Tools |
+| 54 | `de:pdf/formular-ausfuellen` | PDF Formular AusfÃ¼llen | Kostenlos | BestOnline.Tools |
+| 54 | `de:werkzeuge/skizze-in-svg-umwandeln` | Skizze in SVG umwandeln | Kostenlos | BestOnline.Tools |
+| 53 | `en:tools/jpg-to-pdf` | JPG to PDF Converter | Free Online | BestOnline.Tools |
