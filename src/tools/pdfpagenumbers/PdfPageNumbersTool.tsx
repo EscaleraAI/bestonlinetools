@@ -4,12 +4,14 @@ import { useState, useRef, useCallback } from 'react';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 import ToolSuccess from '@/components/ToolSuccess';
 import ToolIcon from '@/components/ui/ToolIcon';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './PdfPageNumbersTool.module.css';
 
 type NumberPosition = 'bottom-center' | 'bottom-left' | 'bottom-right' | 'top-center' | 'top-left' | 'top-right';
 type NumberFormat = 'plain' | 'page-of' | 'dash' | 'roman';
 
 export default function PdfPageNumbersTool() {
+  const { t } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [pageCount, setPageCount] = useState(0);
   const [position, setPosition] = useState<NumberPosition>('bottom-center');
@@ -34,9 +36,9 @@ export default function PdfPageNumbersTool() {
       setStatus('idle');
     } catch {
       setStatus('error');
-      setStatusText('Failed to read PDF.');
+      setStatusText(t('pdfPageNumbers.readError'));
     }
-  }, []);
+  }, [t]);
 
   const toRoman = (n: number): string => {
     const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
@@ -62,7 +64,7 @@ export default function PdfPageNumbersTool() {
   const handleApply = useCallback(async () => {
     if (!file) return;
     setStatus('processing');
-    setStatusText('Adding page numbers...');
+    setStatusText(t('pdfPageNumbers.adding'));
     try {
       const buffer = await file.arrayBuffer();
       const pdfDoc = await PDFDocument.load(buffer, { ignoreEncryption: true });
@@ -109,9 +111,9 @@ export default function PdfPageNumbersTool() {
       setStatus('done');
     } catch (err: unknown) {
       setStatus('error');
-      setStatusText(err instanceof Error ? err.message : 'Failed to add page numbers');
+      setStatusText(err instanceof Error ? err.message : t('pdfPageNumbers.addError'));
     }
-  }, [file, position, format, startNumber, fontSize]);
+  }, [file, position, format, startNumber, fontSize, t]);
 
   const handleDownload = useCallback(() => {
     if (!resultUrl || !resultFile) return;
@@ -143,7 +145,7 @@ export default function PdfPageNumbersTool() {
         <div className={styles.resultSection}>
           <div className={styles.resultSummary}>
             <div className={styles.resultIcon}>✓</div>
-            <h3>Page numbers added to {pageCount} pages</h3>
+            <h3>{t('pdfPageNumbers.success', { count: String(pageCount) })}</h3>
             <p>{formatSize(resultFile.size)}</p>
           </div>
           <ToolSuccess
@@ -152,7 +154,7 @@ export default function PdfPageNumbersTool() {
             onDownload={handleDownload}
             crossLinks={[]}
           />
-          <button className={styles.resetButton} onClick={handleReset}>Number another PDF</button>
+          <button className={styles.resetButton} onClick={handleReset}>{t('pdfPageNumbers.numberAnother')}</button>
         </div>
       </div>
     );
@@ -172,8 +174,8 @@ export default function PdfPageNumbersTool() {
     return (
       <div className={styles.container}>
         <div className={styles.errorSection}>
-          <p className={styles.errorText}>Error: {statusText}</p>
-          <button className={styles.resetButton} onClick={handleReset}>Try again</button>
+          <p className={styles.errorText}>{statusText}</p>
+          <button className={styles.resetButton} onClick={handleReset}>{t('pdfPageNumbers.tryAgain')}</button>
         </div>
       </div>
     );
@@ -189,8 +191,8 @@ export default function PdfPageNumbersTool() {
           onClick={() => fileInputRef.current?.click()}
         >
           <span className={styles.dropzoneIcon}><ToolIcon name="hash" size={32} /></span>
-          <p className={styles.dropzoneTitle}>Drop a PDF to add page numbers</p>
-          <p className={styles.dropzoneSubtitle}>PDF files only</p>
+          <p className={styles.dropzoneTitle}>{t('pdfPageNumbers.dropTitle')}</p>
+          <p className={styles.dropzoneSubtitle}>{t('pdfPageNumbers.dropSubtitle')}</p>
           <input
             ref={fileInputRef}
             type="file"
@@ -205,28 +207,28 @@ export default function PdfPageNumbersTool() {
             <ToolIcon name="file-text" size={20} />
             <div>
               <span className={styles.fileName}>{file.name}</span>
-              <span className={styles.fileMeta}>{pageCount} pages · {formatSize(file.size)}</span>
+              <span className={styles.fileMeta}>{t('pdfPageNumbers.pages', { count: String(pageCount) })} · {formatSize(file.size)}</span>
             </div>
           </div>
 
           <div className={styles.settingsPanel}>
-            <h3 className={styles.settingsTitle}>Page Number Settings</h3>
+            <h3 className={styles.settingsTitle}>{t('pdfPageNumbers.settingsTitle')}</h3>
 
             <div className={styles.fieldRow}>
               <div className={styles.field}>
-                <label className={styles.label}>Position</label>
+                <label className={styles.label}>{t('pdfPageNumbers.position')}</label>
                 <select className={styles.select} value={position} onChange={(e) => setPosition(e.target.value as NumberPosition)}>
-                  <option value="bottom-center">Bottom Center</option>
-                  <option value="bottom-left">Bottom Left</option>
-                  <option value="bottom-right">Bottom Right</option>
-                  <option value="top-center">Top Center</option>
-                  <option value="top-left">Top Left</option>
-                  <option value="top-right">Top Right</option>
+                  <option value="bottom-center">{t('pdfPageNumbers.bottomCenter')}</option>
+                  <option value="bottom-left">{t('pdfPageNumbers.bottomLeft')}</option>
+                  <option value="bottom-right">{t('pdfPageNumbers.bottomRight')}</option>
+                  <option value="top-center">{t('pdfPageNumbers.topCenter')}</option>
+                  <option value="top-left">{t('pdfPageNumbers.topLeft')}</option>
+                  <option value="top-right">{t('pdfPageNumbers.topRight')}</option>
                 </select>
               </div>
 
               <div className={styles.field}>
-                <label className={styles.label}>Format</label>
+                <label className={styles.label}>{t('pdfPageNumbers.format')}</label>
                 <select className={styles.select} value={format} onChange={(e) => setFormat(e.target.value as NumberFormat)}>
                   <option value="plain">1, 2, 3...</option>
                   <option value="page-of">Page 1 of 10</option>
@@ -238,7 +240,7 @@ export default function PdfPageNumbersTool() {
 
             <div className={styles.fieldRow}>
               <div className={styles.field}>
-                <label className={styles.label}>Start Number</label>
+                <label className={styles.label}>{t('pdfPageNumbers.startNumber')}</label>
                 <input
                   type="number"
                   className={styles.input}
@@ -249,7 +251,7 @@ export default function PdfPageNumbersTool() {
               </div>
 
               <div className={styles.field}>
-                <label className={styles.label}>Font Size</label>
+                <label className={styles.label}>{t('pdfPageNumbers.fontSize')}</label>
                 <input
                   type="number"
                   className={styles.input}
@@ -262,14 +264,14 @@ export default function PdfPageNumbersTool() {
             </div>
 
             <div className={styles.preview}>
-              Preview: {formatPageNumber(0, pageCount)} ... {formatPageNumber(pageCount - 1, pageCount)}
+              {t('pdfPageNumbers.preview')}: {formatPageNumber(0, pageCount)} ... {formatPageNumber(pageCount - 1, pageCount)}
             </div>
           </div>
 
           <div className={styles.actionBar}>
-            <button className={styles.resetButton} onClick={handleReset}>Change file</button>
+            <button className={styles.resetButton} onClick={handleReset}>{t('pdfPageNumbers.changeFile')}</button>
             <button className="btn btn-primary btn-lg" onClick={handleApply}>
-              Add Page Numbers →
+              {t('pdfPageNumbers.addButton')}
             </button>
           </div>
         </>

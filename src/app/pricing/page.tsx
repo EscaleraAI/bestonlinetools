@@ -1,86 +1,81 @@
-import type { Metadata } from 'next';
+'use client';
+
 import Link from 'next/link';
 import { getActiveTools } from '@/lib/tools/registry';
 import ToolIcon from '@/components/ui/ToolIcon';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './pricing.module.css';
-
-export const metadata: Metadata = {
-  title: 'Pricing | BestOnline.Tools',
-  description:
-    'BestOnline.Tools is 100% free. All tools run locally in your browser — no uploads, no limits, no account required.',
-};
 
 export default function PricingPage() {
   const tools = getActiveTools();
+  const { t, localizedHref } = useLocale();
 
   return (
     <main className={styles.container}>
-      <span className={styles.label}>Pricing</span>
+      <span className={styles.label}>{t('pricing.label')}</span>
       <h1 className={styles.title}>
-        Free. Unlimited.<br />No Catch.
+        {t('pricing.title')}<br />{t('pricing.titleLine2')}
       </h1>
       <p className={styles.subtitle}>
-        Every tool runs locally on your device using WebAssembly and WebGPU.
-        That means it costs us nothing to run — so we pass that on to you.
+        {t('pricing.subtitle')}
       </p>
 
       {/* Free Plan */}
       <div className={styles.planCard}>
         <div className={styles.planHeader}>
-          <span className={styles.planBadge}>Current Plan</span>
-          <h2 className={styles.planName}>Free</h2>
+          <span className={styles.planBadge}>{t('pricing.currentPlan')}</span>
+          <h2 className={styles.planName}>{t('pricing.planName')}</h2>
           <div className={styles.planPrice}>
-            <span className={styles.priceValue}>$0</span>
-            <span className={styles.pricePeriod}>/ forever</span>
+            <span className={styles.priceValue}>{t('pricing.priceValue')}</span>
+            <span className={styles.pricePeriod}>{t('pricing.pricePeriod')}</span>
           </div>
         </div>
         <ul className={styles.featureList}>
           <li className={styles.feature}>
             <span className={styles.featureCheck}>✓</span>
-            All {tools.length} tools — unlimited use
+            {t('pricing.feature1', { count: String(tools.length) })}
           </li>
           <li className={styles.feature}>
             <span className={styles.featureCheck}>✓</span>
-            No file size limits
+            {t('pricing.feature2')}
           </li>
           <li className={styles.feature}>
             <span className={styles.featureCheck}>✓</span>
-            No account required
+            {t('pricing.feature3')}
           </li>
           <li className={styles.feature}>
             <span className={styles.featureCheck}>✓</span>
-            100% private — files never uploaded
+            {t('pricing.feature4')}
           </li>
           <li className={styles.feature}>
             <span className={styles.featureCheck}>✓</span>
-            No watermarks
+            {t('pricing.feature5')}
           </li>
           <li className={styles.feature}>
             <span className={styles.featureCheck}>✓</span>
-            No ads
+            {t('pricing.feature6')}
           </li>
         </ul>
-        <Link href={tools[0]?.href ?? '/'} className={styles.planCta}>
-          Start Using Tools →
+        <Link href={localizedHref(tools[0]?.href ?? '/')} className={styles.planCta}>
+          {t('pricing.cta')}
         </Link>
       </div>
 
       {/* Pro teaser */}
       <div className={styles.proTeaser}>
-        <h3 className={styles.proTitle}>Pro Plan</h3>
+        <h3 className={styles.proTitle}>{t('pricing.proTitle')}</h3>
         <p className={styles.proDesc}>
-          Cloud AI features — premium vectorization, AI-powered image upscaling,
-          batch processing, and more — are coming soon.
+          {t('pricing.proDesc')}
         </p>
-        <span className={styles.proBadge}>Coming 2026</span>
+        <span className={styles.proBadge}>{t('pricing.proBadge')}</span>
       </div>
 
       {/* Tool list */}
       <section className={styles.toolsSection}>
-        <h2 className={styles.toolsTitle}>What&apos;s Included</h2>
+        <h2 className={styles.toolsTitle}>{t('pricing.whatsIncluded')}</h2>
         <div className={styles.toolsGrid}>
           {tools.map((tool) => (
-            <Link key={tool.slug} href={tool.href} className={styles.toolItem}>
+            <Link key={tool.slug} href={localizedHref(tool.href)} className={styles.toolItem}>
               <span className={styles.toolIcon}><ToolIcon name={tool.icon} size={20} /></span>
               <div>
                 <strong>{tool.name}</strong>

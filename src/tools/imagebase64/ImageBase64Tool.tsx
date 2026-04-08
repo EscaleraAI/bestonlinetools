@@ -2,83 +2,67 @@
 
 import { useState, useRef, useCallback } from 'react';
 import ToolIcon from '@/components/ui/ToolIcon';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './ImageBase64Tool.module.css';
 
 type Mode = 'encode' | 'decode';
 
 export default function ImageBase64Tool() {
+  const { t } = useLocale();
   const [mode, setMode] = useState<Mode>('encode');
-  // Encode state
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [base64, setBase64] = useState('');
   const [copied, setCopied] = useState(false);
-  // Decode state
   const [decodeInput, setDecodeInput] = useState('');
   const [decodedPreview, setDecodedPreview] = useState<string | null>(null);
   const [decodeError, setDecodeError] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Encode: image → base64
   const handleFileSelect = useCallback(async (files: FileList | File[]) => {
     const imgFile = Array.from(files).find(f => f.type.startsWith('image/'));
     if (!imgFile) return;
     const url = URL.createObjectURL(imgFile);
-    setPreview(url);
-    setFile(imgFile);
-
+    setPreview(url); setFile(imgFile);
     const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      setBase64(result);
-    };
+    reader.onload = () => { setBase64(reader.result as string); };
     reader.readAsDataURL(imgFile);
   }, []);
 
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(base64);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setCopied(true); setTimeout(() => setCopied(false), 2000);
   }, [base64]);
 
   const handleCopyRaw = useCallback(() => {
     const raw = base64.replace(/^data:[^;]+;base64,/, '');
     navigator.clipboard.writeText(raw);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setCopied(true); setTimeout(() => setCopied(false), 2000);
   }, [base64]);
 
-  // Decode: base64 → image
   const handleDecode = useCallback(() => {
     setDecodeError('');
     try {
       let src = decodeInput.trim();
-      if (!src.startsWith('data:')) {
-        src = `data:image/png;base64,${src}`;
-      }
-      // Validate by trying to decode
+      if (!src.startsWith('data:')) src = `data:image/png;base64,${src}`;
       const raw = src.replace(/^data:[^;]+;base64,/, '');
-      atob(raw); // throws if invalid
+      atob(raw);
       setDecodedPreview(src);
     } catch {
-      setDecodeError('Invalid Base64 string. Please check and try again.');
+      setDecodeError(t('imageBase64.decodeError'));
       setDecodedPreview(null);
     }
-  }, [decodeInput]);
+  }, [decodeInput, t]);
 
   const handleDownloadDecoded = useCallback(() => {
     if (!decodedPreview) return;
     const a = document.createElement('a');
-    a.href = decodedPreview;
-    a.download = 'decoded_image.png';
-    a.click();
+    a.href = decodedPreview; a.download = 'decoded_image.png'; a.click();
   }, [decodedPreview]);
 
   const handleResetEncode = () => {
     if (preview) URL.revokeObjectURL(preview);
-    setFile(null);
-    setPreview(null);
-    setBase64('');
+    setFile(null); setPreview(null); setBase64('');
   };
 
   const formatSize = (bytes: number) => {
@@ -89,35 +73,28 @@ export default function ImageBase64Tool() {
 
   return (
     <div className={styles.container}>
-      {/* Mode toggle */}
       <div className={styles.modeToggle}>
         <button className={`${styles.modeButton} ${mode === 'encode' ? styles.modeActive : ''}`} onClick={() => setMode('encode')}>
-          Image → Base64
+          {t('imageBase64.encodeMode')}
         </button>
         <button className={`${styles.modeButton} ${mode === 'decode' ? styles.modeActive : ''}`} onClick={() => setMode('decode')}>
-          Base64 → Image
+          {t('imageBase64.decodeMode')}
         </button>
       </div>
 
       {mode === 'encode' ? (
         <>
           {!file ? (
-            <div
-              className={styles.dropzone}
+            <div className={styles.dropzone}
               onDragOver={(e) => e.preventDefault()}
               onDrop={(e) => { e.preventDefault(); handleFileSelect(e.dataTransfer.files); }}
-              onClick={() => fileInputRef.current?.click()}
-            >
+              onClick={() => fileInputRef.current?.click()}>
               <span className={styles.dropzoneIcon}><ToolIcon name="code" size={32} /></span>
-              <p className={styles.dropzoneTitle}>Drop an image to encode</p>
-              <p className={styles.dropzoneSubtitle}>Supports JPG, PNG, WebP, GIF, BMP</p>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
+              <p className={styles.dropzoneTitle}>{t('imageBase64.dropTitle')}</p>
+              <p className={styles.dropzoneSubtitle}>{t('imageBase64.dropSubtitle')}</p>
+              <input ref={fileInputRef} type="file" accept="image/*"
                 onChange={(e) => { if (e.target.files) handleFileSelect(e.target.files); }}
-                className={styles.hiddenInput}
-              />
+                className={styles.hiddenInput} />
             </div>
           ) : (
             <>
@@ -127,16 +104,15 @@ export default function ImageBase64Tool() {
                   <span className={styles.fileName}>{file.name}</span>
                   <span className={styles.fileMeta}>{formatSize(file.size)} · Base64: {formatSize(base64.length)}</span>
                 </div>
-                <button className={styles.resetButton} onClick={handleResetEncode}>Change</button>
+                <button className={styles.resetButton} onClick={handleResetEncode}>{t('imageBase64.change')}</button>
               </div>
-
               <div className={styles.outputSection}>
                 <div className={styles.outputHeader}>
-                  <span className={styles.label}>Data URI (with prefix)</span>
+                  <span className={styles.label}>{t('imageBase64.dataUri')}</span>
                   <div className={styles.copyButtons}>
-                    <button className={styles.copyBtn} onClick={handleCopyRaw}>Copy Raw</button>
+                    <button className={styles.copyBtn} onClick={handleCopyRaw}>{t('imageBase64.copyRaw')}</button>
                     <button className={styles.copyBtn} onClick={handleCopy}>
-                      {copied ? '✓ Copied!' : 'Copy Data URI'}
+                      {copied ? t('imageBase64.copied') : t('imageBase64.copyDataUri')}
                     </button>
                   </div>
                 </div>
@@ -148,26 +124,20 @@ export default function ImageBase64Tool() {
       ) : (
         <>
           <div className={styles.inputSection}>
-            <label className={styles.label}>Paste Base64 string or Data URI</label>
-            <textarea
-              className={styles.inputArea}
-              value={decodeInput}
+            <label className={styles.label}>{t('imageBase64.pasteLabel')}</label>
+            <textarea className={styles.inputArea} value={decodeInput}
               onChange={(e) => setDecodeInput(e.target.value)}
-              placeholder="data:image/png;base64,iVBORw0KGgo..."
-              rows={6}
-            />
+              placeholder="data:image/png;base64,iVBORw0KGgo..." rows={6} />
             <button className="btn btn-primary" onClick={handleDecode} disabled={!decodeInput.trim()}>
-              Decode Image
+              {t('imageBase64.decodeButton')}
             </button>
           </div>
-
           {decodeError && <p className={styles.errorText}>{decodeError}</p>}
-
           {decodedPreview && (
             <div className={styles.decodedResult}>
               <img src={decodedPreview} alt="Decoded" className={styles.decodedImage} />
               <button className="btn btn-primary" onClick={handleDownloadDecoded}>
-                Download Image
+                {t('imageBase64.downloadImage')}
               </button>
             </div>
           )}

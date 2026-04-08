@@ -1,12 +1,14 @@
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 import Link from 'next/link';
-import { i18n, type Locale } from '@/lib/i18n';
+import { i18n, localizedHrefFromPath, type Locale } from '@/lib/i18n';
 import { resolveFromPath, getSiblingPages, getRelatedPages } from '@/lib/pageResolver';
 import { getToolComponent } from '@/lib/toolRegistry';
 import { getToolBySlug, getActiveTools } from '@/lib/tools/registry';
 import { getToolContent } from '@/lib/tools/toolContent';
 import { SITE_URL } from '@/lib/seo/metadata';
+import { getTranslator } from '@/lib/i18n/server';
+import type { TranslationKey } from '@/lib/i18n/translations/en';
 import HomeContent from '@/components/HomeContent';
 import ToolPageContent from './ToolPageContent';
 import styles from './ToolPageLayout.module.css';
@@ -40,6 +42,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return {
       title: 'BestOnline.Tools — Kostenlose Online-Konvertierungstools',
       description: 'Kostenlose Online-Dateikonvertierungstools. Konvertieren Sie Bilder, PDFs und Audio — alles direkt in Ihrem Browser. Schnell, privat, kein Upload erforderlich.',
+      openGraph: { locale: 'de_DE' },
     };
   }
 
@@ -54,9 +57,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
   languages['x-default'] = languages[i18n.defaultLocale] || `https://bestonline.tools/${page.canonicalSlug}`;
 
+  const ogLocale = locale === 'de' ? 'de_DE' : 'en_US';
+
   return {
     title: page.metaTitle,
     description: page.metaDesc,
+    openGraph: {
+      title: page.metaTitle,
+      description: page.metaDesc,
+      locale: ogLocale,
+    },
     alternates: {
       canonical: `https://bestonline.tools/${page.canonicalSlug}`,
       languages,
@@ -130,8 +140,15 @@ export default async function ToolPage({ params }: PageProps) {
   const otherCategory = allTools.filter(t => t.slug !== currentToolSlug && t.category !== tool.category);
   const otherTools = [...sameCategory.slice(0, 4), ...otherCategory.slice(0, 6 - Math.min(sameCategory.length, 4))];
 
+  // Translation helper
+  const t = getTranslator(locale);
+  const lHref = (enPath: string) => localizedHrefFromPath(enPath, locale);
+
   // Breadcrumb data
-  const categoryLabel = tool.category.charAt(0).toUpperCase() + tool.category.slice(1);
+  const categoryKeys: Record<string, 'nav.imageTools' | 'nav.pdfTools' | 'nav.audioTools' | 'nav.textDevTools'> = {
+    image: 'nav.imageTools', pdf: 'nav.pdfTools', audio: 'nav.audioTools', data: 'nav.textDevTools',
+  };
+  const categoryLabel = t(categoryKeys[tool.category] || 'nav.imageTools');
 
   // JSON-LD schemas
   const faqSchema = page.faqJson.length > 0 ? {
@@ -151,21 +168,21 @@ export default async function ToolPage({ params }: PageProps) {
     url: `${SITE_URL}/${page.canonicalSlug}`,
     applicationCategory: 'UtilitiesApplication',
     operatingSystem: 'Any',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+    offers: { '@type': 'Offer', price: '0', priceCurrency: locale === 'de' ? 'EUR' : 'USD' },
     browserRequirements: 'Requires a modern web browser',
   };
 
   // HowTo schema from tool content
-  const toolContent = getToolContent(page.toolId);
+  const toolContent = getToolContent(page.toolId, locale);
   const howToSchema = toolContent ? {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
-    name: `How to use ${page.h1.split('—')[0].trim()}`,
+    name: locale === 'de' ? `So verwenden Sie ${page.h1.split('—')[0].trim()}` : `How to use ${page.h1.split('—')[0].trim()}`,
     description: page.metaDesc,
     step: toolContent.howItWorks.map((step: string, i: number) => ({
       '@type': 'HowToStep',
       position: i + 1,
-      name: `Step ${i + 1}`,
+      name: locale === 'de' ? `Schritt ${i + 1}` : `Step ${i + 1}`,
       text: step,
     })),
   } : null;
@@ -174,8 +191,8 @@ export default async function ToolPage({ params }: PageProps) {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://bestonline.tools' },
-      { '@type': 'ListItem', position: 2, name: `${categoryLabel} Tools`, item: `https://bestonline.tools/#tools` },
+      { '@type': 'ListItem', position: 1, name: locale === 'de' ? 'Startseite' : 'Home', item: locale === 'de' ? 'https://bestonline.tools/de' : 'https://bestonline.tools' },
+      { '@type': 'ListItem', position: 2, name: categoryLabel, item: locale === 'de' ? 'https://bestonline.tools/de#tools' : 'https://bestonline.tools/#tools' },
       { '@type': 'ListItem', position: 3, name: page.h1 },
     ],
   };
@@ -206,9 +223,9 @@ export default async function ToolPage({ params }: PageProps) {
       <div className={styles.toolPage}>
         {/* Breadcrumb */}
         <nav className={styles.breadcrumb} aria-label="Breadcrumb">
-          <Link href="/">Home</Link>
+          <Link href={lHref('/')}>{t('toolPage.home')}</Link>
           <span className={styles.breadcrumbSep}>›</span>
-          <Link href="/#tools">{categoryLabel} Tools</Link>
+          <Link href={lHref('/#tools')}>{t('toolPage.tools', { category: categoryLabel })}</Link>
           <span className={styles.breadcrumbSep}>›</span>
           <span className={styles.breadcrumbCurrent}>{page.h1.split('—')[0].trim()}</span>
         </nav>
@@ -232,16 +249,16 @@ export default async function ToolPage({ params }: PageProps) {
         {/* Privacy Trust Badge */}
         <div className={styles.trustBadge}>
           <span className={styles.trustIcon}>🔒</span>
-          <span>100% Private — Your files never leave your device. All processing runs locally in your browser.</span>
+          <span>{t('toolPage.trustBadge')}</span>
         </div>
 
         {/* Description */}
         <section className={styles.descriptionSection}>
           <div className={styles.descriptionGrid}>
             <div className={styles.descriptionContent}>
-              <h2>How It Works</h2>
+              <h2>{t('toolPage.howItWorks')}</h2>
               {(() => {
-                const content = getToolContent(page.toolId);
+                const content = getToolContent(page.toolId, locale);
                 if (content) {
                   return content.howItWorks.map((p, i) => (
                     <p key={i}>{p}</p>
@@ -249,30 +266,23 @@ export default async function ToolPage({ params }: PageProps) {
                 }
                 return (
                   <>
-                    <p>
-                      This tool runs entirely in your browser using WebAssembly technology.
-                      Your files are never uploaded to any server — all processing happens
-                      locally on your device for maximum privacy and speed.
-                    </p>
-                    <p>
-                      Simply drag and drop your file, adjust the settings, and download
-                      the result instantly. No account required, no file size limits.
-                    </p>
+                    <p>{t('toolPage.defaultHowItWorks1')}</p>
+                    <p>{t('toolPage.defaultHowItWorks2')}</p>
                   </>
                 );
               })()}
             </div>
             <div className={styles.descriptionContent}>
-              <h2>Features</h2>
+              <h2>{t('toolPage.features')}</h2>
               <ul className={styles.featureList}>
                 {(() => {
-                  const content = getToolContent(page.toolId);
+                  const content = getToolContent(page.toolId, locale);
                   const features = content?.features ?? [
-                    '100% free with no limits or watermarks',
-                    'Files never leave your device — complete privacy',
-                    'No account or signup required',
-                    'Powered by WebAssembly for near-native speed',
-                    'Works on any modern browser — desktop or mobile',
+                    t('toolPage.defaultFeature1'),
+                    t('toolPage.defaultFeature2'),
+                    t('toolPage.defaultFeature3'),
+                    t('toolPage.defaultFeature4'),
+                    t('toolPage.defaultFeature5'),
                   ];
                   return features.map((f, i) => (
                     <li key={i} className={styles.featureItem}>
@@ -288,7 +298,7 @@ export default async function ToolPage({ params }: PageProps) {
 
         {/* FAQ — merge page-level and tool-level FAQs */}
         {(() => {
-          const contentFaqs = getToolContent(page.toolId)?.faqs ?? [];
+          const contentFaqs = getToolContent(page.toolId, locale)?.faqs ?? [];
           const pageFaqs = page.faqJson ?? [];
           // Deduplicate by question text (page-level takes priority)
           const seenQs = new Set(pageFaqs.map(f => f.q));
@@ -297,7 +307,7 @@ export default async function ToolPage({ params }: PageProps) {
           return (
             <section className={styles.faqSection}>
               <div className={styles.faqHeader}>
-                <h2>Frequently Asked Questions</h2>
+                <h2>{t('toolPage.faq')}</h2>
               </div>
               <ToolPageContent faqs={mergedFaqs} />
             </section>
@@ -307,18 +317,18 @@ export default async function ToolPage({ params }: PageProps) {
         {/* Related Tools */}
         <section className={styles.relatedSection}>
           <div className={styles.relatedHeader}>
-            <h2>More Free Tools</h2>
-            <p>Explore our other browser-based conversion tools</p>
+            <h2>{t('toolPage.moreTools')}</h2>
+            <p>{t('toolPage.moreToolsDesc')}</p>
           </div>
           <div className={styles.relatedGrid}>
-            {otherTools.map((t) => (
-              <Link key={t.slug} href={t.href} className={styles.relatedCard}>
+            {otherTools.map((tl) => (
+              <Link key={tl.slug} href={lHref(tl.href)} className={styles.relatedCard}>
                 <span className={styles.relatedIcon}>
-                  <ToolPageContent iconName={t.icon} />
+                  <ToolPageContent iconName={tl.icon} />
                 </span>
                 <div className={styles.relatedInfo}>
-                  <span className={styles.relatedName}>{t.name}</span>
-                  <span className={styles.relatedTagline}>{t.tagline}</span>
+                  <span className={styles.relatedName}>{t(`registry.${tl.slug}.name` as TranslationKey)}</span>
+                  <span className={styles.relatedTagline}>{t(`registry.${tl.slug}.tagline` as TranslationKey)}</span>
                 </div>
               </Link>
             ))}
@@ -329,11 +339,11 @@ export default async function ToolPage({ params }: PageProps) {
         {relatedPages.length > 0 && (
           <section className={styles.crossLinksSection}>
             <div className={styles.crossLinksHeader}>
-              <h3>Related Conversions</h3>
+              <h3>{t('toolPage.relatedConversions')}</h3>
             </div>
             <div className={styles.crossLinksGrid}>
               {relatedPages.map((rp) => (
-                <Link key={rp.slug} href={`/${rp.slug}`} className={styles.crossLink}>
+                <Link key={rp.slug} href={lHref(`/${rp.slug}`)} className={styles.crossLink}>
                   {rp.h1.split('—')[0].trim()}
                 </Link>
               ))}

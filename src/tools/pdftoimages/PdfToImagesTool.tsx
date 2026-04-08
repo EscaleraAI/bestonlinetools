@@ -3,15 +3,17 @@
 import { useState, useRef, useCallback } from 'react';
 import ToolIcon from '@/components/ui/ToolIcon';
 import ToolSuccess from '@/components/ToolSuccess';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './PdfToImagesTool.module.css';
 
 type OutputFormat = 'png' | 'jpeg';
 
 export default function PdfToImagesTool() {
+  const { t } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [pageCount, setPageCount] = useState(0);
   const [outputFormat, setOutputFormat] = useState<OutputFormat>('png');
-  const [scale, setScale] = useState(2); // render scale factor
+  const [scale, setScale] = useState(2);
   const [status, setStatus] = useState<'idle' | 'loading' | 'converting' | 'done' | 'error'>('idle');
   const [statusText, setStatusText] = useState('');
   const [progress, setProgress] = useState(0);
@@ -22,7 +24,7 @@ export default function PdfToImagesTool() {
     const pdfFile = Array.from(files).find(f => f.type === 'application/pdf');
     if (!pdfFile) return;
     setStatus('loading');
-    setStatusText('Reading PDF...');
+    setStatusText(t('pdfToImages.reading'));
     try {
       const pdfjsLib = await import('pdfjs-dist');
       pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -34,14 +36,14 @@ export default function PdfToImagesTool() {
       setStatus('idle');
     } catch {
       setStatus('error');
-      setStatusText('Failed to read PDF file.');
+      setStatusText(t('pdfToImages.readError'));
     }
-  }, []);
+  }, [t]);
 
   const handleConvert = useCallback(async () => {
     if (!file) return;
     setStatus('converting');
-    setStatusText('Converting pages...');
+    setStatusText(t('pdfToImages.converting'));
     setProgress(0);
 
     try {
@@ -55,7 +57,7 @@ export default function PdfToImagesTool() {
       const ext = outputFormat === 'jpeg' ? 'jpg' : 'png';
 
       for (let i = 1; i <= pdf.numPages; i++) {
-        setStatusText(`Rendering page ${i} of ${pdf.numPages}...`);
+        setStatusText(t('pdfToImages.renderingPage', { current: String(i), total: String(pdf.numPages) }));
         setProgress(Math.round((i / pdf.numPages) * 100));
 
         const page = await pdf.getPage(i);
@@ -81,9 +83,9 @@ export default function PdfToImagesTool() {
       setStatus('done');
     } catch (err: unknown) {
       setStatus('error');
-      setStatusText(err instanceof Error ? err.message : 'Conversion failed');
+      setStatusText(err instanceof Error ? err.message : t('pdfToImages.conversionError'));
     }
-  }, [file, outputFormat, scale]);
+  }, [file, outputFormat, scale, t]);
 
   const handleDownloadAll = useCallback(() => {
     resultImages.forEach(img => {
@@ -121,15 +123,15 @@ export default function PdfToImagesTool() {
         <div className={styles.resultSection}>
           <div className={styles.resultSummary}>
             <div className={styles.resultIcon}>✓</div>
-            <h3>{resultImages.length} pages converted to {outputFormat.toUpperCase()}</h3>
+            <h3>{t('pdfToImages.success', { count: String(resultImages.length), format: outputFormat.toUpperCase() })}</h3>
           </div>
 
           <div className={styles.imageGrid}>
             {resultImages.map(img => (
               <div key={img.page} className={styles.imageCard}>
-                <img src={img.url} alt={`Page ${img.page}`} className={styles.pageThumb} />
+                <img src={img.url} alt={t('pdfToImages.pageLabel', { number: String(img.page) })} className={styles.pageThumb} />
                 <div className={styles.imageCardInfo}>
-                  <span>Page {img.page}</span>
+                  <span>{t('pdfToImages.pageLabel', { number: String(img.page) })}</span>
                   <span>{formatSize(img.file.size)}</span>
                 </div>
                 <button className={styles.dlBtn} onClick={() => handleDownloadSingle(img)}>↓</button>
@@ -143,7 +145,7 @@ export default function PdfToImagesTool() {
             onDownload={handleDownloadAll}
             crossLinks={[]}
           />
-          <button className={styles.resetButton} onClick={handleReset}>Convert another PDF</button>
+          <button className={styles.resetButton} onClick={handleReset}>{t('pdfToImages.convertAnother')}</button>
         </div>
       </div>
     );
@@ -168,8 +170,8 @@ export default function PdfToImagesTool() {
     return (
       <div className={styles.container}>
         <div className={styles.errorSection}>
-          <p className={styles.errorText}>Error: {statusText}</p>
-          <button className={styles.resetButton} onClick={handleReset}>Try again</button>
+          <p className={styles.errorText}>{statusText}</p>
+          <button className={styles.resetButton} onClick={handleReset}>{t('pdfToImages.tryAgain')}</button>
         </div>
       </div>
     );
@@ -183,8 +185,8 @@ export default function PdfToImagesTool() {
           onDrop={(e) => { e.preventDefault(); handleFileSelect(e.dataTransfer.files); }}
           onClick={() => fileInputRef.current?.click()}>
           <span className={styles.dropzoneIcon}><ToolIcon name="file-image" size={32} /></span>
-          <p className={styles.dropzoneTitle}>Drop a PDF to convert to images</p>
-          <p className={styles.dropzoneSubtitle}>Each page becomes a separate image</p>
+          <p className={styles.dropzoneTitle}>{t('pdfToImages.dropTitle')}</p>
+          <p className={styles.dropzoneSubtitle}>{t('pdfToImages.dropSubtitle')}</p>
           <input ref={fileInputRef} type="file" accept="application/pdf"
             onChange={(e) => { if (e.target.files) handleFileSelect(e.target.files); }}
             className={styles.hiddenInput} />
@@ -199,37 +201,37 @@ export default function PdfToImagesTool() {
         <ToolIcon name="file-text" size={20} />
         <div>
           <span className={styles.fileName}>{file.name}</span>
-          <span className={styles.fileMeta}>{pageCount} pages · {formatSize(file.size)}</span>
+          <span className={styles.fileMeta}>{t('pdfToImages.pages', { count: String(pageCount) })} · {formatSize(file.size)}</span>
         </div>
       </div>
 
       <div className={styles.settingsPanel}>
-        <h3 className={styles.settingsTitle}>Output Settings</h3>
+        <h3 className={styles.settingsTitle}>{t('pdfToImages.settingsTitle')}</h3>
         <div className={styles.fieldRow}>
           <div className={styles.field}>
-            <label className={styles.label}>Format</label>
+            <label className={styles.label}>{t('pdfToImages.format')}</label>
             <select className={styles.select} value={outputFormat}
               onChange={(e) => setOutputFormat(e.target.value as OutputFormat)}>
-              <option value="png">PNG (lossless)</option>
-              <option value="jpeg">JPG (smaller)</option>
+              <option value="png">{t('pdfToImages.pngOption')}</option>
+              <option value="jpeg">{t('pdfToImages.jpgOption')}</option>
             </select>
           </div>
           <div className={styles.field}>
-            <label className={styles.label}>Quality</label>
+            <label className={styles.label}>{t('pdfToImages.quality')}</label>
             <select className={styles.select} value={scale}
               onChange={(e) => setScale(Number(e.target.value))}>
               <option value={1}>1× (72 DPI)</option>
-              <option value={2}>2× (144 DPI) — Recommended</option>
-              <option value={3}>3× (216 DPI) — High Quality</option>
+              <option value={2}>2× (144 DPI)</option>
+              <option value={3}>3× (216 DPI)</option>
             </select>
           </div>
         </div>
       </div>
 
       <div className={styles.actionBar}>
-        <button className={styles.resetButton} onClick={handleReset}>Change file</button>
+        <button className={styles.resetButton} onClick={handleReset}>{t('pdfToImages.changeFile')}</button>
         <button className="btn btn-primary btn-lg" onClick={handleConvert}>
-          Convert {pageCount} Pages →
+          {t('pdfToImages.convertButton', { count: String(pageCount) })}
         </button>
       </div>
     </div>

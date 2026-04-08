@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { toBlobURL, fetchFile } from '@ffmpeg/util';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import ToolSuccess from '@/components/ToolSuccess';
 import ToolIcon from '@/components/ui/ToolIcon';
 import { getSafeFileSizeMB, getMemoryWarning } from '@/lib/memoryGuard';
@@ -11,6 +12,7 @@ import styles from './VideoToGifTool.module.css';
 const MAX_FILE_SIZE = getSafeFileSizeMB(200) * 1024 * 1024;
 
 export default function VideoToGifTool() {
+  const { t } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
   const [duration, setDuration] = useState(0);
@@ -39,7 +41,7 @@ export default function VideoToGifTool() {
   const loadFFmpeg = useCallback(async () => {
     if (ffmpegRef.current) return ffmpegRef.current;
     setStatus('loading');
-    setStatusText('Loading video engine...');
+    setStatusText(t('videoToGif.loadingEngine'));
     setProgress(0);
 
     const ffmpeg = new FFmpeg();
@@ -55,14 +57,14 @@ export default function VideoToGifTool() {
 
     ffmpegRef.current = ffmpeg;
     return ffmpeg;
-  }, []);
+  }, [t]);
 
   const handleFileSelect = useCallback((files: FileList | File[]) => {
     const vidFile = Array.from(files).find(f => f.type.startsWith('video/'));
     if (!vidFile) return;
     if (vidFile.size > MAX_FILE_SIZE) {
       setStatus('error');
-      setStatusText('File too large. Maximum 200MB.');
+      setStatusText(t('videoToGif.fileTooLarge'));
       return;
     }
 
@@ -77,7 +79,6 @@ export default function VideoToGifTool() {
     setStatus('idle');
     setStatusText('');
 
-    // Get duration
     const video = document.createElement('video');
     video.onloadedmetadata = () => {
       const dur = Math.floor(video.duration);
@@ -86,20 +87,19 @@ export default function VideoToGifTool() {
       setEndTime(Math.min(dur, 10));
     };
     video.src = url;
-  }, [videoUrl, resultUrl]);
+  }, [videoUrl, resultUrl, t]);
 
   const handleConvert = useCallback(async () => {
     if (!file) return;
     try {
       const ffmpeg = await loadFFmpeg();
       setStatus('converting');
-      setStatusText('Converting to GIF...');
+      setStatusText(t('videoToGif.converting'));
       setProgress(0);
 
       const inputName = 'input' + (file.name.match(/\.[^.]+$/)?.[0] || '.mp4');
       await ffmpeg.writeFile(inputName, await fetchFile(file));
 
-      // Two-pass for quality: generate palette then use it
       await ffmpeg.exec([
         '-ss', String(startTime),
         '-t', String(endTime - startTime),
@@ -123,7 +123,6 @@ export default function VideoToGifTool() {
       const outName = file.name.replace(/\.[^.]+$/, '') + '.gif';
       const outFile = new File([blob], outName, { type: 'image/gif' });
 
-      // Cleanup
       await ffmpeg.deleteFile(inputName);
       await ffmpeg.deleteFile('palette.png');
       await ffmpeg.deleteFile('output.gif');
@@ -135,7 +134,7 @@ export default function VideoToGifTool() {
       setStatus('error');
       setStatusText(err instanceof Error ? err.message : 'Conversion failed');
     }
-  }, [file, startTime, endTime, fps, width, loadFFmpeg]);
+  }, [file, startTime, endTime, fps, width, loadFFmpeg, t]);
 
   const handleDownload = useCallback(() => {
     if (!resultUrl || !resultFile) return;
@@ -173,7 +172,7 @@ export default function VideoToGifTool() {
         <div className={styles.resultSection}>
           <div className={styles.resultSummary}>
             <div className={styles.resultIcon}>✓</div>
-            <h3>GIF created — {formatSize(resultFile.size)}</h3>
+            <h3>{t('videoToGif.success', { size: formatSize(resultFile.size) })}</h3>
           </div>
           <div className={styles.gifPreview}>
             <img src={resultUrl} alt="Output GIF" className={styles.gifImage} />
@@ -184,7 +183,7 @@ export default function VideoToGifTool() {
             onDownload={handleDownload}
             crossLinks={[]}
           />
-          <button className={styles.resetButton} onClick={handleReset}>Convert another video</button>
+          <button className={styles.resetButton} onClick={handleReset}>{t('videoToGif.convertAnother')}</button>
         </div>
       </div>
     );
@@ -211,7 +210,7 @@ export default function VideoToGifTool() {
       <div className={styles.container}>
         <div className={styles.errorSection}>
           <p className={styles.errorText}>Error: {statusText}</p>
-          <button className={styles.resetButton} onClick={handleReset}>Try again</button>
+          <button className={styles.resetButton} onClick={handleReset}>{t('videoToGif.tryAgain')}</button>
         </div>
       </div>
     );
@@ -227,8 +226,8 @@ export default function VideoToGifTool() {
           onClick={() => fileInputRef.current?.click()}
         >
           <span className={styles.dropzoneIcon}><ToolIcon name="film" size={32} /></span>
-          <p className={styles.dropzoneTitle}>Drop a video to convert to GIF</p>
-          <p className={styles.dropzoneSubtitle}>Supports MP4, WebM, MOV, AVI · Max 200MB</p>
+          <p className={styles.dropzoneTitle}>{t('videoToGif.dropTitle')}</p>
+          <p className={styles.dropzoneSubtitle}>{t('videoToGif.dropSubtitle')}</p>
           <input
             ref={fileInputRef}
             type="file"
@@ -243,56 +242,54 @@ export default function VideoToGifTool() {
 
   return (
     <div className={styles.container}>
-      {/* Video preview */}
       <div className={styles.videoPreview}>
         <video ref={videoRef} src={videoUrl!} controls className={styles.video} />
       </div>
 
-      {/* Settings */}
       <div className={styles.settingsPanel}>
-        <h3 className={styles.settingsTitle}>GIF Settings</h3>
+        <h3 className={styles.settingsTitle}>{t('videoToGif.settingsTitle')}</h3>
 
         <div className={styles.fieldRow}>
           <div className={styles.field}>
-            <label className={styles.label}>Start Time</label>
+            <label className={styles.label}>{t('videoToGif.startTime')}</label>
             <input type="number" className={styles.input} value={startTime} min={0} max={duration}
               onChange={(e) => setStartTime(Math.min(Number(e.target.value), endTime - 1))} />
             <span className={styles.rangeValue}>{formatTime(startTime)}</span>
           </div>
           <div className={styles.field}>
-            <label className={styles.label}>End Time</label>
+            <label className={styles.label}>{t('videoToGif.endTime')}</label>
             <input type="number" className={styles.input} value={endTime} min={startTime + 1} max={duration}
               onChange={(e) => setEndTime(Math.max(Number(e.target.value), startTime + 1))} />
-            <span className={styles.rangeValue}>{formatTime(endTime)} (duration: {endTime - startTime}s)</span>
+            <span className={styles.rangeValue}>{formatTime(endTime)} ({t('videoToGif.duration', { value: String(endTime - startTime) })})</span>
           </div>
         </div>
 
         <div className={styles.fieldRow}>
           <div className={styles.field}>
-            <label className={styles.label}>FPS</label>
+            <label className={styles.label}>{t('videoToGif.fps')}</label>
             <select className={styles.select} value={fps} onChange={(e) => setFps(Number(e.target.value))}>
-              <option value={10}>10 fps (smaller file)</option>
-              <option value={15}>15 fps (balanced)</option>
-              <option value={20}>20 fps (smoother)</option>
-              <option value={25}>25 fps (high quality)</option>
+              <option value={10}>{t('videoToGif.fps10')}</option>
+              <option value={15}>{t('videoToGif.fps15')}</option>
+              <option value={20}>{t('videoToGif.fps20')}</option>
+              <option value={25}>{t('videoToGif.fps25')}</option>
             </select>
           </div>
           <div className={styles.field}>
-            <label className={styles.label}>Width (px)</label>
+            <label className={styles.label}>{t('videoToGif.widthPx')}</label>
             <select className={styles.select} value={width} onChange={(e) => setWidth(Number(e.target.value))}>
-              <option value={320}>320px (small)</option>
-              <option value={480}>480px (medium)</option>
-              <option value={640}>640px (large)</option>
-              <option value={800}>800px (HD)</option>
+              <option value={320}>{t('videoToGif.width320')}</option>
+              <option value={480}>{t('videoToGif.width480')}</option>
+              <option value={640}>{t('videoToGif.width640')}</option>
+              <option value={800}>{t('videoToGif.width800')}</option>
             </select>
           </div>
         </div>
       </div>
 
       <div className={styles.actionBar}>
-        <button className={styles.resetButton} onClick={handleReset}>Change video</button>
+        <button className={styles.resetButton} onClick={handleReset}>{t('videoToGif.changeVideo')}</button>
         <button className="btn btn-primary btn-lg" onClick={handleConvert}>
-          Convert to GIF →
+          {t('videoToGif.convertButton')}
         </button>
       </div>
     </div>

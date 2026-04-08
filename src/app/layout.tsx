@@ -4,6 +4,7 @@ import { Inter, Outfit } from 'next/font/google';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import FileStoreProvider from '@/components/FileStoreProvider';
+import { LocaleProvider } from '@/lib/i18n/LocaleContext';
 import { createBaseMetadata } from '@/lib/seo/metadata';
 import { GA_MEASUREMENT_ID } from '@/lib/analytics';
 import './globals.css';
@@ -41,11 +42,13 @@ export default function RootLayout({
             </Script>
           </>
         )}
-        <FileStoreProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </FileStoreProvider>
+        <LocaleProvider>
+          <FileStoreProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </FileStoreProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

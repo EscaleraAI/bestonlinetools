@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import { useSpeechToText } from '@/hooks/useSpeechToText';
 import ToolIcon from '@/components/ui/ToolIcon';
 import styles from './SpeechToTextTool.module.css';
@@ -21,6 +22,7 @@ function formatTimestamp(seconds: number): string {
 }
 
 export default function SpeechToTextTool() {
+  const { t } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -69,7 +71,6 @@ export default function SpeechToTextTool() {
 
   const handleDownloadSrt = useCallback(() => {
     if (!resultChunks.length || !file) return;
-    // Build SRT format
     const srt = resultChunks
       .map((chunk, i) => {
         const start = chunk.timestamp[0];
@@ -99,18 +100,16 @@ export default function SpeechToTextTool() {
     return (
       <div className={styles.container}>
         <div className={styles.resultSection}>
-          {/* Transcript */}
           <div className={styles.transcriptBox}>
-            <span className={styles.transcriptLabel}>Transcript</span>
+            <span className={styles.transcriptLabel}>{t('speechToText.transcript')}</span>
             <p className={`${styles.transcriptText} ${!resultText ? styles.transcriptEmpty : ''}`}>
-              {resultText || 'No speech detected'}
+              {resultText || t('speechToText.noSpeech')}
             </p>
           </div>
 
-          {/* Timestamps */}
           {resultChunks.length > 0 && (
             <div className={styles.timestampSection}>
-              <div className={styles.timestampHeader}>Timestamps</div>
+              <div className={styles.timestampHeader}>{t('speechToText.timestamps')}</div>
               {resultChunks.map((chunk, i) => (
                 <div key={i} className={styles.timestampRow}>
                   <span className={styles.timestampTime}>
@@ -122,26 +121,25 @@ export default function SpeechToTextTool() {
             </div>
           )}
 
-          {/* Actions */}
           <div className={styles.resultActions}>
             <button
               className={`${styles.copyButton} ${copied ? styles.copied : ''}`}
               onClick={handleCopy}
             >
-              {copied ? '✓ Copied' : 'Copy Text'}
+              {copied ? t('speechToText.copied') : t('speechToText.copyText')}
             </button>
             <button className={styles.downloadButton} onClick={handleDownloadTxt}>
-              Download .TXT
+              {t('speechToText.downloadTxt')}
             </button>
             {resultChunks.length > 0 && (
               <button className={styles.downloadButton} onClick={handleDownloadSrt}>
-                Download .SRT
+                {t('speechToText.downloadSrt')}
               </button>
             )}
           </div>
 
           <button className={styles.resetButton} onClick={handleReset}>
-            Transcribe another file
+            {t('speechToText.transcribeAnother')}
           </button>
         </div>
       </div>
@@ -161,7 +159,7 @@ export default function SpeechToTextTool() {
             )}
             <p className={styles.statusText}>{statusText}</p>
             <p className={styles.privacyNote}>
-              <ToolIcon name="shield" size={14} /> Whisper AI runs locally — your audio never leaves your device
+              <ToolIcon name="shield" size={14} /> {t('speechToText.privacyNote')}
             </p>
           </div>
         </div>
@@ -176,7 +174,7 @@ export default function SpeechToTextTool() {
         <div className={styles.errorSection}>
           <p className={styles.errorText}>❌ {error}</p>
           <button className={styles.resetButton} onClick={handleReset}>
-            Try again
+            {t('speechToText.tryAgain')}
           </button>
         </div>
       </div>
@@ -203,9 +201,9 @@ export default function SpeechToTextTool() {
       >
         <div className={styles.dropzoneContent}>
           <span className={styles.dropzoneIcon}><ToolIcon name="mic" size={32} /></span>
-          <p className={styles.dropzoneTitle}>Drop audio to transcribe</p>
-          <p className={styles.dropzoneSubtitle}>MP3, WAV, OGG, FLAC, M4A • Max 100MB</p>
-          <button className={styles.uploadButton}>Choose File</button>
+          <p className={styles.dropzoneTitle}>{t('speechToText.dropTitle')}</p>
+          <p className={styles.dropzoneSubtitle}>{t('speechToText.dropSubtitle')}</p>
+          <button className={styles.uploadButton}>{t('speechToText.chooseFile')}</button>
         </div>
         <input
           ref={fileInputRef}
@@ -220,7 +218,6 @@ export default function SpeechToTextTool() {
         />
       </div>
 
-      {/* File info after drop */}
       {file && (
         <div className={styles.fileInfo}>
           <span className={styles.fileIcon}>🎧</span>

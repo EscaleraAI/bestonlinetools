@@ -2,10 +2,12 @@
 
 import { useState, useCallback } from 'react';
 import { PDFDocument, StandardFonts, rgb } from 'pdf-lib';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import ToolSuccess from '@/components/ToolSuccess';
 import styles from './TextToPdfTool.module.css';
 
 export default function TextToPdfTool() {
+  const { t } = useLocale();
   const [text, setText] = useState('');
   const [fontSize, setFontSize] = useState(12);
   const [fontFamily, setFontFamily] = useState<'Helvetica' | 'TimesRoman' | 'Courier'>('Helvetica');
@@ -91,9 +93,9 @@ export default function TextToPdfTool() {
       <div className={styles.container}>
         <div className={styles.resultSection}>
           <div className={styles.resultIcon}>✓</div>
-          <h3>PDF created successfully</h3>
+          <h3>{t('textToPdf.success')}</h3>
           <ToolSuccess outputFiles={[resultFile]} sourceTool="text_to_pdf" onDownload={handleDownload} crossLinks={[]} />
-          <button className={styles.resetBtn} onClick={handleReset}>Convert more text</button>
+          <button className={styles.resetBtn} onClick={handleReset}>{t('textToPdf.convertMore')}</button>
         </div>
       </div>
     );
@@ -105,21 +107,21 @@ export default function TextToPdfTool() {
         className={styles.textArea}
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Type or paste your text here..."
+        placeholder={t('textToPdf.placeholder')}
         rows={12}
       />
       <div className={styles.controls}>
         <div className={styles.field}>
-          <label className={styles.label}>Font</label>
+          <label className={styles.label}>{t('textToPdf.font')}</label>
           <select className={styles.select} value={fontFamily}
             onChange={(e) => setFontFamily(e.target.value as 'Helvetica' | 'TimesRoman' | 'Courier')}>
             <option value="Helvetica">Helvetica</option>
             <option value="TimesRoman">Times Roman</option>
-            <option value="Courier">Courier (Monospace)</option>
+            <option value="Courier">{t('textToPdf.courierMono')}</option>
           </select>
         </div>
         <div className={styles.field}>
-          <label className={styles.label}>Size</label>
+          <label className={styles.label}>{t('textToPdf.size')}</label>
           <select className={styles.select} value={fontSize} onChange={(e) => setFontSize(Number(e.target.value))}>
             <option value={10}>10pt</option>
             <option value={12}>12pt</option>
@@ -129,7 +131,7 @@ export default function TextToPdfTool() {
           </select>
         </div>
         <button className="btn btn-primary btn-lg" onClick={handleConvert} disabled={!text.trim()}>
-          Convert to PDF →
+          {t('textToPdf.convertButton')}
         </button>
       </div>
     </div>

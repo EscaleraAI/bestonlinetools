@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './DiffCheckerTool.module.css';
 
 interface DiffLine { type: 'same' | 'add' | 'remove'; text: string; }
@@ -9,8 +10,6 @@ function computeDiff(a: string, b: string): DiffLine[] {
   const linesA = a.split('\n');
   const linesB = b.split('\n');
   const result: DiffLine[] = [];
-  const max = Math.max(linesA.length, linesB.length);
-  // Simple line-by-line diff
   let iA = 0, iB = 0;
   while (iA < linesA.length || iB < linesB.length) {
     if (iA < linesA.length && iB < linesB.length && linesA[iA] === linesB[iB]) {
@@ -28,6 +27,7 @@ function computeDiff(a: string, b: string): DiffLine[] {
 }
 
 export default function DiffCheckerTool() {
+  const { t } = useLocale();
   const [textA, setTextA] = useState('');
   const [textB, setTextB] = useState('');
   const [diff, setDiff] = useState<DiffLine[] | null>(null);
@@ -46,29 +46,29 @@ export default function DiffCheckerTool() {
     <div className={styles.container}>
       <div className={styles.inputLayout}>
         <div className={styles.col}>
-          <span className={styles.colTitle}>Original</span>
+          <span className={styles.colTitle}>{t('diffChecker.original')}</span>
           <textarea className={styles.area} value={textA}
             onChange={e => setTextA(e.target.value)}
-            placeholder="Paste original text..." rows={12} />
+            placeholder={t('diffChecker.originalPlaceholder')} rows={12} />
         </div>
         <div className={styles.col}>
-          <span className={styles.colTitle}>Changed</span>
+          <span className={styles.colTitle}>{t('diffChecker.changed')}</span>
           <textarea className={styles.area} value={textB}
             onChange={e => setTextB(e.target.value)}
-            placeholder="Paste changed text..." rows={12} />
+            placeholder={t('diffChecker.changedPlaceholder')} rows={12} />
         </div>
       </div>
 
       <div className={styles.actionBar}>
-        <button className="btn btn-primary btn-lg" onClick={handleCompare}>Compare</button>
+        <button className="btn btn-primary btn-lg" onClick={handleCompare}>{t('diffChecker.compare')}</button>
       </div>
 
       {diff && stats && (
         <div className={styles.resultSection}>
           <div className={styles.statsBar}>
-            <span className={styles.statAdd}>+{stats.added} added</span>
-            <span className={styles.statRemove}>−{stats.removed} removed</span>
-            <span className={styles.statSame}>{stats.same} unchanged</span>
+            <span className={styles.statAdd}>{t('diffChecker.added', { count: String(stats.added) })}</span>
+            <span className={styles.statRemove}>{t('diffChecker.removed', { count: String(stats.removed) })}</span>
+            <span className={styles.statSame}>{t('diffChecker.unchanged', { count: String(stats.same) })}</span>
           </div>
           <div className={styles.diffOutput}>
             {diff.map((line, i) => (

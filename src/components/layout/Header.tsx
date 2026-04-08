@@ -8,14 +8,16 @@ import { getActiveTools, getToolBySlug } from '@/lib/tools/registry';
 import { getLocalizedPath } from '@/lib/pageResolver';
 import { getRecentToolIds, addRecentTool } from '@/lib/recentTools';
 import { trackToolOpen } from '@/lib/analytics';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import ToolIcon from '@/components/ui/ToolIcon';
 import styles from './Header.module.css';
+import type { TranslationKey } from '@/lib/i18n/translations/en';
 
 const NAV_GROUPS = [
-  { label: 'Image Tools', category: 'image' as const },
-  { label: 'PDF Tools', category: 'pdf' as const },
-  { label: 'Audio Tools', category: 'audio' as const },
-  { label: 'Text & Dev Tools', category: 'data' as const },
+  { labelKey: 'nav.imageTools' as TranslationKey, category: 'image' as const },
+  { labelKey: 'nav.pdfTools' as TranslationKey, category: 'pdf' as const },
+  { labelKey: 'nav.audioTools' as TranslationKey, category: 'audio' as const },
+  { labelKey: 'nav.textDevTools' as TranslationKey, category: 'data' as const },
 ] as const;
 
 // Only show locales that have actual pages built.
@@ -40,6 +42,7 @@ const MAX_RECENT_DISPLAY = 3;
 export default function Header() {
   const pathname = usePathname();
   const activeTools = getActiveTools();
+  const { t, localizedHref, locale } = useLocale();
   const [menuOpen, setMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const [langOpen, setLangOpen] = useState(false);
@@ -97,11 +100,9 @@ export default function Header() {
     langTimer.current = setTimeout(() => setLangOpen(false), 150);
   }
 
-  // Determine current locale from path
-  const currentLocale = LANGUAGES.find(l =>
-    l.code !== 'en' && pathname.startsWith(`/${l.code}/`)
-  )?.code ?? 'en';
-  const currentLang = LANGUAGES.find(l => l.code === currentLocale)!;
+  // Use locale from context (already detected by LocaleProvider)
+  const currentLocale = locale;
+  const currentLang = LANGUAGES.find(l => l.code === currentLocale) ?? LANGUAGES[0];
 
   // Compute locale-equivalent path for language switching
   function getLocalizedHref(targetLocale: string): string {
@@ -120,7 +121,7 @@ export default function Header() {
     <header className={styles.header}>
       <div className={styles.inner}>
         {/* Logo */}
-        <Link href="/" className={styles.logo}>
+        <Link href={localizedHref('/')} className={styles.logo}>
           <Image src="/logo.png" alt="BestOnline.Tools" width={28} height={28} className={styles.logoImg} />
           <span className={styles.logoText}>BestOnline.Tools</span>
         </Link>
@@ -143,7 +144,7 @@ export default function Header() {
                   onClick={() => setOpenDropdown(isOpen ? null : group.category)}
                   type="button"
                 >
-                  {group.label}
+                  {t(group.labelKey)}
                   <ToolIcon name="chevron-down" size={14} className={styles.chevron} />
                 </button>
 
@@ -152,15 +153,15 @@ export default function Header() {
                     {groupTools.map((tool) => (
                       <Link
                         key={tool.slug}
-                        href={tool.href}
+                        href={localizedHref(tool.href)}
                         className={`${styles.dropdownItem} ${pathname === tool.href ? styles.active : ''}`}
                       >
                         <span className={styles.dropdownIcon}>
                           <ToolIcon name={tool.icon} size={18} />
                         </span>
                         <div className={styles.dropdownText}>
-                          <span className={styles.dropdownName}>{tool.name}</span>
-                          <span className={styles.dropdownTagline}>{tool.tagline}</span>
+                          <span className={styles.dropdownName}>{t(`registry.${tool.slug}.name` as TranslationKey)}</span>
+                          <span className={styles.dropdownTagline}>{t(`registry.${tool.slug}.tagline` as TranslationKey)}</span>
                         </div>
                       </Link>
                     ))}
@@ -174,24 +175,27 @@ export default function Header() {
           {/* Recent tools — only shown when user has history */}
           {recentTools.length > 0 && (
             <div className={styles.recentTools}>
-              <span className={styles.recentLabel}>Recent:</span>
-              {recentTools.map((tool) => (
+              <span className={styles.recentLabel}>{t('nav.recent')}</span>
+              {recentTools.map((tool) => {
+                const rName = t(`registry.${tool.slug}.name` as TranslationKey);
+                return (
                 <Link
                   key={tool.slug}
-                  href={tool.href}
+                  href={localizedHref(tool.href)}
                   className={`${styles.recentPill} ${pathname === tool.href ? styles.recentPillActive : ''}`}
-                  title={tool.name}
+                  title={rName}
                 >
                   <ToolIcon name={tool.icon} size={13} />
-                  <span>{tool.name}</span>
+                  <span>{rName}</span>
                 </Link>
-              ))}
+                );
+              })}
             </div>
           )}
 
         {/* Right actions */}
         <div className={styles.actions}>
-          {/* Language selector — hidden until i18n is complete
+          {/* Language selector */}
           <div
             className={styles.langWrap}
             onMouseEnter={handleLangEnter}
@@ -214,6 +218,9 @@ export default function Header() {
                     key={lang.code}
                     href={getLocalizedHref(lang.code)}
                     className={`${styles.langItem} ${lang.code === currentLocale ? styles.langActive : ''}`}
+                    onClick={() => {
+                      document.cookie = `locale=${lang.code}; path=/; max-age=31536000; SameSite=Lax`;
+                    }}
                   >
                     <span className={styles.langFlag}>{lang.flag}</span>
                     <span>{lang.label}</span>
@@ -222,10 +229,9 @@ export default function Header() {
               </div>
             )}
           </div>
-          */}
 
-          <Link href="/#tools" className="btn btn-primary">
-            Get Started
+          <Link href={localizedHref('/#tools')} className="btn btn-primary">
+            {t('nav.getStarted')}
           </Link>
         </div>
 
@@ -247,16 +253,16 @@ export default function Header() {
           {/* Recent tools in mobile menu */}
           {recentTools.length > 0 && (
             <div className={styles.mobileGroup}>
-              <span className={styles.mobileGroupLabel}>⏱ Recent</span>
+              <span className={styles.mobileGroupLabel}>⏱ {t('nav.recent')}</span>
               {recentTools.map((tool) => (
                 <Link
                   key={tool.slug}
-                  href={tool.href}
+                  href={localizedHref(tool.href)}
                   className={`${styles.mobileLink} ${pathname === tool.href ? styles.active : ''}`}
                   onClick={() => setMenuOpen(false)}
                 >
                   <ToolIcon name={tool.icon} size={16} className={styles.navIcon} />
-                  {tool.name}
+                  {t(`registry.${tool.slug}.name` as TranslationKey)}
                 </Link>
               ))}
             </div>
@@ -265,29 +271,29 @@ export default function Header() {
             const groupTools = activeTools.filter(t => t.category === group.category);
             return (
               <div key={group.category} className={styles.mobileGroup}>
-                <span className={styles.mobileGroupLabel}>{group.label}</span>
+                <span className={styles.mobileGroupLabel}>{t(group.labelKey)}</span>
                 {groupTools.map((tool) => (
                   <Link
                     key={tool.slug}
-                    href={tool.href}
+                    href={localizedHref(tool.href)}
                     className={`${styles.mobileLink} ${
                       pathname === tool.href ? styles.active : ''
                     }`}
                     onClick={() => setMenuOpen(false)}
                   >
                     <ToolIcon name={tool.icon} size={16} className={styles.navIcon} />
-                    {tool.name}
+                    {t(`registry.${tool.slug}.name` as TranslationKey)}
                   </Link>
                 ))}
               </div>
             );
           })}
           <Link
-            href={activeTools[0]?.href ?? '/'}
+            href={localizedHref(activeTools[0]?.href ?? '/')}
             className={styles.mobileCta}
             onClick={() => setMenuOpen(false)}
           >
-            Get Started →
+            {t('nav.getStarted')} →
           </Link>
         </nav>
       )}

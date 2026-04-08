@@ -4,11 +4,13 @@ import { useState, useRef, useCallback } from 'react';
 import { PDFDocument, rgb, degrees, StandardFonts } from 'pdf-lib';
 import ToolSuccess from '@/components/ToolSuccess';
 import ToolIcon from '@/components/ui/ToolIcon';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './PdfWatermarkTool.module.css';
 
 type WatermarkPosition = 'center' | 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
 export default function PdfWatermarkTool() {
+  const { t, localizedHref } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [pageCount, setPageCount] = useState(0);
   const [text, setText] = useState('CONFIDENTIAL');
@@ -27,7 +29,7 @@ export default function PdfWatermarkTool() {
     if (!pdfFile) return;
 
     setStatus('loading');
-    setStatusText('Reading PDF...');
+    setStatusText(t('pdfWatermark.reading'));
     try {
       const buffer = await pdfFile.arrayBuffer();
       const doc = await PDFDocument.load(buffer, { ignoreEncryption: true });
@@ -37,15 +39,15 @@ export default function PdfWatermarkTool() {
       setStatusText('');
     } catch {
       setStatus('error');
-      setStatusText('Failed to read PDF file.');
+      setStatusText(t('pdfWatermark.readError'));
     }
-  }, []);
+  }, [t]);
 
   const handleApply = useCallback(async () => {
     if (!file || !text.trim()) return;
 
     setStatus('processing');
-    setStatusText('Adding watermark...');
+    setStatusText(t('pdfWatermark.adding'));
 
     try {
       const buffer = await file.arrayBuffer();
@@ -104,12 +106,12 @@ export default function PdfWatermarkTool() {
       setResultUrl(url);
       setResultFile(outputFile);
       setStatus('done');
-      setStatusText('Done!');
+      setStatusText(t('tool.done'));
     } catch (err: unknown) {
       setStatus('error');
-      setStatusText(err instanceof Error ? err.message : 'Failed to add watermark');
+      setStatusText(err instanceof Error ? err.message : t('pdfWatermark.addError'));
     }
-  }, [file, text, fontSize, opacity, rotation, position]);
+  }, [file, text, fontSize, opacity, rotation, position, t]);
 
   const handleDownload = useCallback(() => {
     if (!resultUrl || !resultFile) return;
@@ -143,7 +145,7 @@ export default function PdfWatermarkTool() {
         <div className={styles.resultSection}>
           <div className={styles.resultSummary}>
             <div className={styles.resultIcon}>✓</div>
-            <h3>Watermark added to {pageCount} pages</h3>
+            <h3>{t('pdfWatermark.success', { count: String(pageCount) })}</h3>
             <p>{formatSize(resultFile.size)}</p>
           </div>
           <ToolSuccess
@@ -151,11 +153,11 @@ export default function PdfWatermarkTool() {
             sourceTool="pdf_watermark"
             onDownload={handleDownload}
             crossLinks={[
-              { icon: '🔒', label: 'Password protect this PDF', href: '/pdf/password-protect' },
+              { icon: '🔒', label: t('pdfWatermark.passwordLink'), href: localizedHref('/pdf/password-protect') },
             ]}
           />
           <button className={styles.resetButton} onClick={handleReset}>
-            Watermark another PDF
+            {t('pdfWatermark.watermarkAnother')}
           </button>
         </div>
       </div>
@@ -176,8 +178,8 @@ export default function PdfWatermarkTool() {
     return (
       <div className={styles.container}>
         <div className={styles.errorSection}>
-          <p className={styles.errorText}>Error: {statusText}</p>
-          <button className={styles.resetButton} onClick={handleReset}>Try again</button>
+          <p className={styles.errorText}>{statusText}</p>
+          <button className={styles.resetButton} onClick={handleReset}>{t('pdfWatermark.tryAgain')}</button>
         </div>
       </div>
     );
@@ -193,8 +195,8 @@ export default function PdfWatermarkTool() {
           onClick={() => fileInputRef.current?.click()}
         >
           <span className={styles.dropzoneIcon}><ToolIcon name="droplets" size={32} /></span>
-          <p className={styles.dropzoneTitle}>Drop a PDF to add watermark</p>
-          <p className={styles.dropzoneSubtitle}>PDF files only</p>
+          <p className={styles.dropzoneTitle}>{t('pdfWatermark.dropTitle')}</p>
+          <p className={styles.dropzoneSubtitle}>{t('pdfWatermark.dropSubtitle')}</p>
           <input
             ref={fileInputRef}
             type="file"
@@ -209,27 +211,27 @@ export default function PdfWatermarkTool() {
             <ToolIcon name="file-text" size={20} />
             <div>
               <span className={styles.fileName}>{file.name}</span>
-              <span className={styles.fileMeta}>{pageCount} pages · {formatSize(file.size)}</span>
+              <span className={styles.fileMeta}>{t('pdfWatermark.pages', { count: String(pageCount) })} · {formatSize(file.size)}</span>
             </div>
           </div>
 
           <div className={styles.settingsPanel}>
-            <h3 className={styles.settingsTitle}>Watermark Settings</h3>
+            <h3 className={styles.settingsTitle}>{t('pdfWatermark.settingsTitle')}</h3>
 
             <div className={styles.field}>
-              <label className={styles.label}>Text</label>
+              <label className={styles.label}>{t('pdfWatermark.text')}</label>
               <input
                 type="text"
                 className={styles.input}
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                placeholder="Enter watermark text"
+                placeholder={t('pdfWatermark.textPlaceholder')}
               />
             </div>
 
             <div className={styles.fieldRow}>
               <div className={styles.field}>
-                <label className={styles.label}>Font Size</label>
+                <label className={styles.label}>{t('pdfWatermark.fontSize')}</label>
                 <input
                   type="range"
                   min="12"
@@ -242,7 +244,7 @@ export default function PdfWatermarkTool() {
               </div>
 
               <div className={styles.field}>
-                <label className={styles.label}>Opacity</label>
+                <label className={styles.label}>{t('pdfWatermark.opacity')}</label>
                 <input
                   type="range"
                   min="0.05"
@@ -258,7 +260,7 @@ export default function PdfWatermarkTool() {
 
             <div className={styles.fieldRow}>
               <div className={styles.field}>
-                <label className={styles.label}>Rotation</label>
+                <label className={styles.label}>{t('pdfWatermark.rotation')}</label>
                 <input
                   type="range"
                   min="-90"
@@ -271,17 +273,17 @@ export default function PdfWatermarkTool() {
               </div>
 
               <div className={styles.field}>
-                <label className={styles.label}>Position</label>
+                <label className={styles.label}>{t('pdfWatermark.position')}</label>
                 <select
                   className={styles.select}
                   value={position}
                   onChange={(e) => setPosition(e.target.value as WatermarkPosition)}
                 >
-                  <option value="center">Center</option>
-                  <option value="top-left">Top Left</option>
-                  <option value="top-right">Top Right</option>
-                  <option value="bottom-left">Bottom Left</option>
-                  <option value="bottom-right">Bottom Right</option>
+                  <option value="center">{t('pdfWatermark.center')}</option>
+                  <option value="top-left">{t('pdfWatermark.topLeft')}</option>
+                  <option value="top-right">{t('pdfWatermark.topRight')}</option>
+                  <option value="bottom-left">{t('pdfWatermark.bottomLeft')}</option>
+                  <option value="bottom-right">{t('pdfWatermark.bottomRight')}</option>
                 </select>
               </div>
             </div>
@@ -289,14 +291,14 @@ export default function PdfWatermarkTool() {
 
           <div className={styles.actionBar}>
             <button className={styles.resetButton} onClick={handleReset}>
-              Change file
+              {t('pdfWatermark.changeFile')}
             </button>
             <button
               className="btn btn-primary btn-lg"
               onClick={handleApply}
               disabled={!text.trim()}
             >
-              Add Watermark →
+              {t('pdfWatermark.addButton')}
             </button>
           </div>
         </>

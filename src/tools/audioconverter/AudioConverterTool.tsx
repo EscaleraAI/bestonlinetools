@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { toBlobURL, fetchFile } from '@ffmpeg/util';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import ToolSuccess from '@/components/ToolSuccess';
 import ToolIcon from '@/components/ui/ToolIcon';
 import { getSafeFileSizeMB } from '@/lib/memoryGuard';
@@ -81,6 +82,7 @@ function getReductionPercent(original: number, compressed: number): number {
 }
 
 export default function AudioConverterTool() {
+  const { t } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
   const [duration, setDuration] = useState<number>(0);
@@ -112,7 +114,7 @@ export default function AudioConverterTool() {
     if (ffmpegRef.current) return ffmpegRef.current;
 
     setStatus('loading');
-    setStatusText('Loading audio engine...');
+    setStatusText(t('audioConverter.loadingEngine'));
     setProgress(0);
 
     const ffmpeg = new FFmpeg();
@@ -136,12 +138,12 @@ export default function AudioConverterTool() {
       const ext = f.name.split('.').pop()?.toLowerCase() || '';
       const validExtensions = ['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'weba', 'webm', 'mp4'];
       if (!ACCEPTED_TYPES.includes(f.type) && !validExtensions.includes(ext)) {
-        setError('Unsupported audio format. Try MP3, WAV, OGG, FLAC, or AAC.');
+        setError(t('audioConverter.unsupportedFormat'));
         setStatus('error');
         return;
       }
       if (f.size > MAX_FILE_SIZE) {
-        setError('File too large. Maximum size is 100MB.');
+        setError(t('audioConverter.fileTooLarge'));
         setStatus('error');
         return;
       }
@@ -176,7 +178,7 @@ export default function AudioConverterTool() {
       const ffmpeg = await loadFFmpeg();
 
       setStatus('converting');
-      setStatusText('Converting audio...');
+      setStatusText(t('audioConverter.converting'));
       setProgress(0);
 
       // Get input extension
@@ -213,7 +215,7 @@ export default function AudioConverterTool() {
       // Overwrite output
       args.push('-y', outputName);
 
-      setStatusText(`Converting to ${fmtConfig.label}...`);
+      setStatusText(t('audioConverter.convertingTo', { format: fmtConfig.label }));
       await ffmpeg.exec(args);
 
       // Read output
@@ -282,24 +284,24 @@ export default function AudioConverterTool() {
         <div className={styles.resultSection}>
           <div className={styles.resultSummary}>
             <div className={styles.resultIcon}>✓</div>
-            <h3>Audio converted to {FORMAT_MAP[outputFormat].label}</h3>
+            <h3>{t('audioConverter.success', { format: FORMAT_MAP[outputFormat].label })}</h3>
             <div className={styles.resultStats}>
               <div className={styles.resultStat}>
                 <span className={styles.resultStatValue}>
                   {file ? formatSize(file.size) : '—'}
                 </span>
-                <span className={styles.resultStatLabel}>Original</span>
+                <span className={styles.resultStatLabel}>{t('audioConverter.original')}</span>
               </div>
               <div className={styles.resultStat}>
                 <span className={styles.resultStatValue}>{formatSize(resultFile.size)}</span>
-                <span className={styles.resultStatLabel}>Converted</span>
+                <span className={styles.resultStatLabel}>{t('audioConverter.converted')}</span>
               </div>
               {reduction > 0 && (
                 <div className={styles.resultStat}>
                   <span className={`${styles.resultStatValue} ${styles.resultStatAccent}`}>
                     {reduction}%
                   </span>
-                  <span className={styles.resultStatLabel}>Smaller</span>
+                  <span className={styles.resultStatLabel}>{t('audioConverter.smaller')}</span>
                 </div>
               )}
             </div>
@@ -319,7 +321,7 @@ export default function AudioConverterTool() {
           />
 
           <button className={styles.resetButton} onClick={handleReset}>
-            Convert another file
+            {t('audioConverter.convertAnother')}
           </button>
         </div>
       </div>
@@ -340,12 +342,12 @@ export default function AudioConverterTool() {
             <p className={styles.statusText}>{statusText}</p>
             {status === 'loading' && (
               <p className={styles.privacyNote}>
-                <ToolIcon name="shield" size={14} /> Audio engine loads once (~30MB) — all processing stays local
+                <ToolIcon name="shield" size={14} /> {t('audioConverter.loadingNote')}
               </p>
             )}
             {status === 'converting' && (
               <p className={styles.privacyNote}>
-                <ToolIcon name="shield" size={14} /> Converting locally — your files never leave your device
+                <ToolIcon name="shield" size={14} /> {t('audioConverter.convertingNote')}
               </p>
             )}
           </div>
@@ -361,7 +363,7 @@ export default function AudioConverterTool() {
         <div className={styles.errorSection}>
           <p className={styles.errorText}>❌ {error}</p>
           <button className={styles.resetButton} onClick={handleReset}>
-            Try again
+            {t('audioConverter.tryAgain')}
           </button>
         </div>
       </div>
@@ -390,10 +392,10 @@ export default function AudioConverterTool() {
         <div className={styles.dropzoneContent}>
           <span className={styles.dropzoneIcon}><ToolIcon name="music" size={32} /></span>
           <p className={styles.dropzoneTitle}>
-            {file ? 'Replace audio file' : 'Drop audio to convert'}
+            {file ? t('audioConverter.dropTitleReplace') : t('audioConverter.dropTitle')}
           </p>
-          <p className={styles.dropzoneSubtitle}>MP3, WAV, OGG, FLAC, AAC • Max 100MB</p>
-          <button className={styles.uploadButton}>Choose File</button>
+          <p className={styles.dropzoneSubtitle}>{t('audioConverter.dropSubtitle')}</p>
+          <button className={styles.uploadButton}>{t('audioConverter.chooseFile')}</button>
         </div>
         <input
           ref={fileInputRef}
@@ -431,7 +433,7 @@ export default function AudioConverterTool() {
             {/* Output Format */}
             <div className={styles.controlGroup}>
               <div className={styles.controlRow}>
-                <span className={styles.controlLabel}>Output Format</span>
+                <span className={styles.controlLabel}>{t('audioConverter.outputFormat')}</span>
               </div>
               <div className={styles.formatRow}>
                 {(Object.keys(FORMAT_MAP) as OutputFormat[]).map((fmt) => (
@@ -450,7 +452,7 @@ export default function AudioConverterTool() {
             {outputFormat !== 'wav' && outputFormat !== 'flac' && (
               <div className={styles.controlGroup}>
                 <div className={styles.controlRow}>
-                  <span className={styles.controlLabel}>Bitrate</span>
+                  <span className={styles.controlLabel}>{t('audioConverter.bitrate')}</span>
                   <span className={styles.controlValue}>{bitrate} kbps</span>
                 </div>
                 <input
@@ -468,7 +470,7 @@ export default function AudioConverterTool() {
             {/* Trim (optional) */}
             <div className={styles.controlGroup}>
               <div className={styles.controlRow}>
-                <span className={styles.controlLabel}>Trim (optional)</span>
+                <span className={styles.controlLabel}>{t('audioConverter.trim')}</span>
               </div>
               <div className={styles.trimSection}>
                 <input
@@ -478,7 +480,7 @@ export default function AudioConverterTool() {
                   onChange={(e) => setTrimStart(e.target.value)}
                   className={styles.trimInput}
                 />
-                <span className={styles.trimSeparator}>to</span>
+                <span className={styles.trimSeparator}>{t('audioConverter.trimTo')}</span>
                 <input
                   type="text"
                   placeholder={duration > 0 ? formatDuration(duration) : 'end'}
@@ -486,7 +488,7 @@ export default function AudioConverterTool() {
                   onChange={(e) => setTrimEnd(e.target.value)}
                   className={styles.trimInput}
                 />
-                <span className={styles.trimSeparator}>seconds</span>
+                <span className={styles.trimSeparator}>{t('audioConverter.trimSeconds')}</span>
               </div>
             </div>
           </div>
@@ -497,7 +499,7 @@ export default function AudioConverterTool() {
               {file.name.split('.').pop()?.toUpperCase()} → {FORMAT_MAP[outputFormat].label}
             </span>
             <button className="btn btn-primary btn-lg" onClick={handleConvert}>
-              Convert to {FORMAT_MAP[outputFormat].label} →
+              {t('audioConverter.convertButton', { format: FORMAT_MAP[outputFormat].label })}
             </button>
           </div>
         </>

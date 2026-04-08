@@ -111,7 +111,7 @@ const pages: Record<string, PageData> = {
   },
 
   // ---- SPOKES: Vectorizer long-tail (DE) ----
-  'de:werkzeuge/logo-in-svg-umwandeln': {
+  'de:tools/logo-in-svg-umwandeln': {
     toolId: 'svg_vectorizer',
     pageType: 'SPOKE',
     h1: 'Logo in SVG umwandeln — Kostenloser Logo-Vektorisierer',
@@ -124,7 +124,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/convert-logo-to-svg',
   },
-  'de:werkzeuge/unterschrift-in-svg-umwandeln': {
+  'de:tools/unterschrift-in-svg-umwandeln': {
     toolId: 'svg_vectorizer',
     pageType: 'SPOKE',
     h1: 'Unterschrift in SVG umwandeln — Kostenloser Signatur-Vektorisierer',
@@ -135,7 +135,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/convert-signature-to-svg',
   },
-  'de:werkzeuge/skizze-in-svg-umwandeln': {
+  'de:tools/skizze-in-svg-umwandeln': {
     toolId: 'svg_vectorizer',
     pageType: 'SPOKE',
     h1: 'Skizze in SVG umwandeln — Kostenloser Skizzen-Vektorisierer',
@@ -146,7 +146,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/convert-sketch-to-svg',
   },
-  'de:werkzeuge/foto-in-svg-umwandeln': {
+  'de:tools/foto-in-svg-umwandeln': {
     toolId: 'svg_vectorizer',
     pageType: 'SPOKE',
     h1: 'Foto in SVG umwandeln — Kostenloser Foto-Vektorisierer',
@@ -265,7 +265,7 @@ const pages: Record<string, PageData> = {
   },
 
   // ---- SPOKES: BG Remover long-tail (DE) ----
-  'de:werkzeuge/hintergrund-von-portrait-entfernen': {
+  'de:tools/hintergrund-von-portrait-entfernen': {
     toolId: 'remove_bg',
     pageType: 'SPOKE',
     h1: 'Hintergrund von Portrait entfernen — Kostenloser Portrait-Ausschnitt',
@@ -276,7 +276,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/remove-background-from-portrait',
   },
-  'de:werkzeuge/hintergrund-von-produktfoto-entfernen': {
+  'de:tools/hintergrund-von-produktfoto-entfernen': {
     toolId: 'remove_bg',
     pageType: 'SPOKE',
     h1: 'Hintergrund von Produktfoto entfernen — Kostenlos für E-Commerce',
@@ -287,7 +287,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/remove-background-from-product-photo',
   },
-  'de:werkzeuge/bild-transparent-machen': {
+  'de:tools/bild-transparent-machen': {
     toolId: 'remove_bg',
     pageType: 'SPOKE',
     h1: 'Bild transparent machen — Kostenloser Hintergrund-Radierer',
@@ -615,7 +615,7 @@ const pages: Record<string, PageData> = {
     canonicalSlug: 'tools/pdf-page-extractor',
   },
 
-  'de:werkzeuge/pdf-dateien-zusammenfuehren': {
+  'de:tools/pdf-dateien-zusammenfuehren': {
     toolId: 'pdf_merge',
     pageType: 'SPOKE',
     h1: 'PDF-Dateien zusammenführen — Kostenlos',
@@ -626,7 +626,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/combine-pdf-files',
   },
-  'de:werkzeuge/seiten-aus-pdf-extrahieren': {
+  'de:tools/seiten-aus-pdf-extrahieren': {
     toolId: 'pdf_split',
     pageType: 'SPOKE',
     h1: 'Seiten aus PDF extrahieren — Kostenloser Seitenextraktor',
@@ -637,7 +637,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/extract-pages-from-pdf',
   },
-  'de:werkzeuge/pdf-nach-seiten-teilen': {
+  'de:tools/pdf-nach-seiten-teilen': {
     toolId: 'pdf_split',
     pageType: 'SPOKE',
     h1: 'PDF nach Seiten teilen — Kostenloser PDF-Splitter',
@@ -788,7 +788,7 @@ const pages: Record<string, PageData> = {
   },
 
   // ---- SPOKES: Image Compressor long-tail (DE) ----
-  'de:werkzeuge/png-komprimieren': {
+  'de:tools/png-komprimieren': {
     toolId: 'image_compressor',
     pageType: 'SPOKE',
     h1: 'PNG komprimieren — Kostenloser PNG-Optimierer',
@@ -799,7 +799,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/compress-png-online',
   },
-  'de:werkzeuge/jpg-komprimieren': {
+  'de:tools/jpg-komprimieren': {
     toolId: 'image_compressor',
     pageType: 'SPOKE',
     h1: 'JPG komprimieren — Kostenloser JPEG-Optimierer',
@@ -810,7 +810,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/compress-jpg-online',
   },
-  'de:werkzeuge/bilddateigroesse-reduzieren': {
+  'de:tools/bilddateigroesse-reduzieren': {
     toolId: 'image_compressor',
     pageType: 'SPOKE',
     h1: 'Bilddateigröße reduzieren — Kostenlos',
@@ -964,7 +964,7 @@ const pages: Record<string, PageData> = {
   },
 
   // ---- SPOKES: Coloring Page long-tail (DE) ----
-  'de:werkzeuge/foto-in-ausmalbild-verwandeln': {
+  'de:tools/foto-in-ausmalbild-verwandeln': {
     toolId: 'coloring_page',
     pageType: 'SPOKE',
     h1: 'Foto in Ausmalbild verwandeln — Kostenlos für Eltern & Lehrer',
@@ -975,7 +975,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/turn-photo-into-coloring-page',
   },
-  'de:werkzeuge/foto-zu-strichzeichnung': {
+  'de:tools/foto-zu-strichzeichnung': {
     toolId: 'coloring_page',
     pageType: 'SPOKE',
     h1: 'Foto zu Strichzeichnung — Kostenloser Konverter',
@@ -986,7 +986,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/photo-to-line-art',
   },
-  'de:werkzeuge/ausmalbuch-seiten-erstellen': {
+  'de:tools/ausmalbuch-seiten-erstellen': {
     toolId: 'coloring_page',
     pageType: 'SPOKE',
     h1: 'Ausmalbuch-Seiten erstellen — Kostenloses Tool',
@@ -1133,7 +1133,7 @@ const pages: Record<string, PageData> = {
     locale: 'en',
     canonicalSlug: 'tools/convert-flac-to-mp3',
   },
-  'de:werkzeuge/wav-in-mp3-umwandeln': {
+  'de:tools/wav-in-mp3-umwandeln': {
     toolId: 'audio_converter',
     pageType: 'SPOKE',
     h1: 'WAV in MP3 umwandeln — Kostenlos',
@@ -1144,7 +1144,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/convert-wav-to-mp3',
   },
-  'de:werkzeuge/mp3-in-wav-umwandeln': {
+  'de:tools/mp3-in-wav-umwandeln': {
     toolId: 'audio_converter',
     pageType: 'SPOKE',
     h1: 'MP3 in WAV umwandeln — Kostenlos',
@@ -1155,7 +1155,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/convert-mp3-to-wav',
   },
-  'de:werkzeuge/flac-in-mp3-umwandeln': {
+  'de:tools/flac-in-mp3-umwandeln': {
     toolId: 'audio_converter',
     pageType: 'SPOKE',
     h1: 'FLAC in MP3 umwandeln — Kostenlos',
@@ -1302,7 +1302,7 @@ const pages: Record<string, PageData> = {
     locale: 'en',
     canonicalSlug: 'tools/transcribe-podcast-free',
   },
-  'de:werkzeuge/audio-transkribieren': {
+  'de:tools/audio-transkribieren': {
     toolId: 'speech_to_text',
     pageType: 'SPOKE',
     h1: 'Audio transkribieren — Kostenlos',
@@ -1313,7 +1313,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/transcribe-audio-to-text',
   },
-  'de:werkzeuge/audio-zu-srt-untertitel': {
+  'de:tools/audio-zu-srt-untertitel': {
     toolId: 'speech_to_text',
     pageType: 'SPOKE',
     h1: 'Audio zu SRT-Untertiteln — Kostenloser Generator',
@@ -1324,7 +1324,7 @@ const pages: Record<string, PageData> = {
     locale: 'de',
     canonicalSlug: 'tools/audio-to-srt-subtitles',
   },
-  'de:werkzeuge/podcast-transkribieren': {
+  'de:tools/podcast-transkribieren': {
     toolId: 'speech_to_text',
     pageType: 'SPOKE',
     h1: 'Podcast transkribieren — Kostenlos mit KI',
@@ -1440,7 +1440,7 @@ const pages: Record<string, PageData> = {
     locale: 'en',
     canonicalSlug: 'tools/encrypt-pdf',
   },
-  'de:werkzeuge/pdf-verschluesseln': {
+  'de:tools/pdf-verschluesseln': {
     toolId: 'pdf_password',
     pageType: 'SPOKE',
     h1: 'PDF verschlüsseln — Kostenlos Online',
@@ -1463,7 +1463,7 @@ const pages: Record<string, PageData> = {
     locale: 'en',
     canonicalSlug: 'tools/lock-pdf',
   },
-  'de:werkzeuge/pdf-sperren': {
+  'de:tools/pdf-sperren': {
     toolId: 'pdf_password',
     pageType: 'SPOKE',
     h1: 'PDF mit Passwort sperren — Kostenlos Online',
@@ -1758,7 +1758,7 @@ const pages: Record<string, PageData> = {
     locale: 'en',
     canonicalSlug: 'tools/convert-heic-to-jpg',
   },
-  'de:werkzeuge/heic-zu-jpg-konvertieren': {
+  'de:tools/heic-zu-jpg-konvertieren': {
     toolId: 'image_converter',
     pageType: 'SPOKE',
     h1: 'HEIC in JPG umwandeln — Kostenlos Online',
@@ -1783,7 +1783,7 @@ const pages: Record<string, PageData> = {
     locale: 'en',
     canonicalSlug: 'tools/convert-webp-to-jpg',
   },
-  'de:werkzeuge/webp-zu-jpg-konvertieren': {
+  'de:tools/webp-zu-jpg-konvertieren': {
     toolId: 'image_converter',
     pageType: 'SPOKE',
     h1: 'WebP in JPG umwandeln — Kostenlos Online',
@@ -1808,7 +1808,7 @@ const pages: Record<string, PageData> = {
     locale: 'en',
     canonicalSlug: 'tools/convert-webp-to-png',
   },
-  'de:werkzeuge/webp-zu-png-konvertieren': {
+  'de:tools/webp-zu-png-konvertieren': {
     toolId: 'image_converter',
     pageType: 'SPOKE',
     h1: 'WebP in PNG umwandeln — Kostenlos Online',
@@ -1831,7 +1831,7 @@ const pages: Record<string, PageData> = {
     locale: 'en',
     canonicalSlug: 'tools/convert-avif-to-jpg',
   },
-  'de:werkzeuge/avif-zu-jpg-konvertieren': {
+  'de:tools/avif-zu-jpg-konvertieren': {
     toolId: 'image_converter',
     pageType: 'SPOKE',
     h1: 'AVIF in JPG umwandeln — Kostenlos Online',
@@ -2089,7 +2089,7 @@ const pages: Record<string, PageData> = {
     locale: 'en',
     canonicalSlug: 'tools/qr-code-generator',
   },
-  'de:werkzeuge/qr-code-erstellen': {
+  'de:tools/qr-code-erstellen': {
     toolId: 'qr_code',
     pageType: 'HUB',
     h1: 'QR-Code Generator — Kostenlos',
@@ -2401,7 +2401,7 @@ const pages: Record<string, PageData> = {
   },
 
   // ─── DE HUBs for Text & Dev Tools ───
-  'de:werkzeuge/wort-zaehler': {
+  'de:tools/wort-zaehler': {
     toolId: 'word_counter', pageType: 'HUB',
     h1: 'Wortzähler — Wörter, Zeichen & Mehr zählen',
     metaTitle: 'Wortzähler | Kostenlos Online',
@@ -2409,7 +2409,7 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos. Keine Anmeldung erforderlich.' }],
     defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/word-counter',
   },
-  'de:werkzeuge/gross-kleinschreibung': {
+  'de:tools/gross-kleinschreibung': {
     toolId: 'case_converter', pageType: 'HUB',
     h1: 'Groß-/Kleinschreibung ändern — Kostenlos Online',
     metaTitle: 'Text Groß-/Kleinschreibung | Kostenlos',
@@ -2417,7 +2417,7 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos.' }],
     defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/case-converter',
   },
-  'de:werkzeuge/lorem-ipsum': {
+  'de:tools/lorem-ipsum': {
     toolId: 'lorem_ipsum', pageType: 'HUB',
     h1: 'Lorem Ipsum Generator — Platzhaltertext',
     metaTitle: 'Lorem Ipsum Generator | Kostenlos',
@@ -2425,7 +2425,7 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos.' }],
     defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/lorem-ipsum',
   },
-  'de:werkzeuge/text-zu-pdf': {
+  'de:tools/text-zu-pdf': {
     toolId: 'text_to_pdf', pageType: 'HUB',
     h1: 'Text zu PDF — Text in PDF umwandeln',
     metaTitle: 'Text zu PDF | Kostenlos, Ohne Upload',
@@ -2433,7 +2433,7 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Ist es kostenlos?', a: 'Ja, 100% kostenlos.' }],
     defaultConfig: {}, locale: 'de', canonicalSlug: 'tools/text-to-pdf',
   },
-  'de:werkzeuge/json-formatierer': {
+  'de:tools/json-formatierer': {
     toolId: 'json_formatter', pageType: 'HUB',
     h1: 'JSON Formatierer & Validator — Kostenlos Online',
     metaTitle: 'JSON Formatierer | Kostenlos',
@@ -2526,7 +2526,7 @@ const pages: Record<string, PageData> = {
     ],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/color-code-converter',
   },
-  'de:werkzeuge/farbwaehler': {
+  'de:tools/farbwaehler': {
     toolId: 'color_picker', pageType: 'HUB',
     h1: 'Farbwähler — HEX, RGB, HSL Konverter',
     metaTitle: 'Kostenloser Farbwähler | HEX RGB HSL',
@@ -2544,7 +2544,7 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Is it free?', a: 'Yes, 100% free.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/url-encoder',
   },
-  'de:werkzeuge/url-encoder': {
+  'de:tools/url-encoder': {
     toolId: 'url_encoder', pageType: 'HUB',
     h1: 'URL Encoder / Decoder — Kostenlos Online',
     metaTitle: 'URL Encoder Decoder | Kostenlos',
@@ -2562,7 +2562,7 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Is it free?', a: 'Yes, 100% free.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/base64-text',
   },
-  'de:werkzeuge/base64-text': {
+  'de:tools/base64-text': {
     toolId: 'base64_text', pageType: 'HUB',
     h1: 'Base64 Text Encoder / Decoder — Kostenlos',
     metaTitle: 'Base64 Encoder Decoder | Kostenlos',
@@ -2580,7 +2580,7 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Is it secure?', a: 'Yes — uses crypto.getRandomValues().' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/password-generator',
   },
-  'de:werkzeuge/passwort-generator': {
+  'de:tools/passwort-generator': {
     toolId: 'password_generator', pageType: 'HUB',
     h1: 'Passwort-Generator — Sichere Passwörter erstellen',
     metaTitle: 'Passwort-Generator | Kostenlos, Sicher',
@@ -2676,7 +2676,7 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Is it free?', a: 'Yes, 100% free.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/diff-checker',
   },
-  'de:werkzeuge/text-vergleich': {
+  'de:tools/text-vergleich': {
     toolId: 'diff_checker', pageType: 'HUB',
     h1: 'Text-Vergleich — Texte online vergleichen',
     metaTitle: 'Text-Vergleich | Kostenlos',
@@ -2701,7 +2701,7 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Is it secure?', a: 'Yes — uses the browser native Web Crypto API.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/hash-generator',
   },
-  'de:werkzeuge/hash-generator': {
+  'de:tools/hash-generator': {
     toolId: 'hash_generator', pageType: 'HUB',
     h1: 'Hash-Generator — SHA-256, SHA-512 & Mehr',
     metaTitle: 'Kostenloser Hash-Generator | SHA256 SHA512',
@@ -2741,7 +2741,7 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'What syntax?', a: 'JavaScript/ECMAScript regex syntax.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/regex-tester',
   },
-  'de:werkzeuge/regex-tester': {
+  'de:tools/regex-tester': {
     toolId: 'regex_tester', pageType: 'HUB',
     h1: 'Regex-Tester — Reguläre Ausdrücke testen',
     metaTitle: 'Regex-Tester | Kostenlos Online',
@@ -2759,7 +2759,7 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Is it free?', a: 'Yes, 100% free.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/csv-json',
   },
-  'de:werkzeuge/csv-json': {
+  'de:tools/csv-json': {
     toolId: 'csv_json', pageType: 'HUB',
     h1: 'CSV ↔ JSON Konverter — Kostenlos Online',
     metaTitle: 'CSV zu JSON Konverter | Kostenlos',
@@ -2799,7 +2799,7 @@ const pages: Record<string, PageData> = {
     faqJson: [{ q: 'Is it free?', a: 'Yes, 100% free.' }],
     defaultConfig: {}, locale: 'en', canonicalSlug: 'tools/markdown-html',
   },
-  'de:werkzeuge/markdown-html': {
+  'de:tools/markdown-html': {
     toolId: 'markdown_html', pageType: 'HUB',
     h1: 'Markdown ↔ HTML Konverter — Kostenlos',
     metaTitle: 'Markdown zu HTML Konverter | Kostenlos',

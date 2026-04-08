@@ -4,11 +4,13 @@ import { useState, useRef, useCallback } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import ToolSuccess from '@/components/ToolSuccess';
 import ToolIcon from '@/components/ui/ToolIcon';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './PdfSplitTool.module.css';
 
 type SplitMode = 'extract' | 'every-n' | 'equal-parts';
 
 export default function PdfSplitTool() {
+  const { t, localizedHref } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [pageCount, setPageCount] = useState(0);
   const [status, setStatus] = useState<'idle' | 'loading' | 'splitting' | 'done' | 'error'>('idle');
@@ -24,7 +26,7 @@ export default function PdfSplitTool() {
   const handleFile = useCallback(async (f: File) => {
     if (f.type !== 'application/pdf') return;
     setStatus('loading');
-    setStatusText('Reading PDF...');
+    setStatusText(t('pdfSplit.reading'));
     try {
       const buffer = await f.arrayBuffer();
       const doc = await PDFDocument.load(buffer, { ignoreEncryption: true });
@@ -34,9 +36,9 @@ export default function PdfSplitTool() {
       setStatus('idle');
     } catch (err: any) {
       setStatus('error');
-      setStatusText(err.message || 'Failed to read PDF');
+      setStatusText(err.message || t('pdfSplit.readError'));
     }
-  }, []);
+  }, [t]);
 
   // Parse page ranges like "1, 3-5, 8"
   const parsePageRanges = (input: string, max: number): number[] => {
@@ -71,9 +73,9 @@ export default function PdfSplitTool() {
       const outputs: File[] = [];
 
       if (splitMode === 'extract') {
-        setStatusText('Extracting pages...');
+        setStatusText(t('pdfSplit.extracting'));
         const indices = parsePageRanges(extractInput, pageCount);
-        if (indices.length === 0) throw new Error('No valid pages selected');
+        if (indices.length === 0) throw new Error(t('pdfSplit.noValidPages'));
 
         const newDoc = await PDFDocument.create();
         const copiedPages = await newDoc.copyPages(srcDoc, indices);
@@ -85,7 +87,7 @@ export default function PdfSplitTool() {
         const n = Math.max(1, everyN);
         const totalChunks = Math.ceil(pageCount / n);
         for (let chunk = 0; chunk < totalChunks; chunk++) {
-          setStatusText(`Creating part ${chunk + 1} of ${totalChunks}...`);
+          setStatusText(t('pdfSplit.creatingPart', { current: String(chunk + 1), total: String(totalChunks) }));
           const start = chunk * n;
           const end = Math.min(start + n, pageCount);
           const indices = Array.from({ length: end - start }, (_, i) => start + i);
@@ -101,7 +103,7 @@ export default function PdfSplitTool() {
         const parts = Math.max(2, Math.min(equalParts, pageCount));
         const pagesPerPart = Math.ceil(pageCount / parts);
         for (let part = 0; part < parts; part++) {
-          setStatusText(`Creating part ${part + 1} of ${parts}...`);
+          setStatusText(t('pdfSplit.creatingPart', { current: String(part + 1), total: String(parts) }));
           const start = part * pagesPerPart;
           const end = Math.min(start + pagesPerPart, pageCount);
           if (start >= pageCount) break;
@@ -118,12 +120,12 @@ export default function PdfSplitTool() {
 
       setResultFiles(outputs);
       setStatus('done');
-      setStatusText('Done!');
+      setStatusText(t('tool.done'));
     } catch (err: any) {
       setStatus('error');
-      setStatusText(err.message || 'Split failed');
+      setStatusText(err.message || t('tool.error'));
     }
-  }, [file, splitMode, extractInput, everyN, equalParts, pageCount]);
+  }, [file, splitMode, extractInput, everyN, equalParts, pageCount, t]);
 
   const handleDownloadAll = useCallback(() => {
     resultFiles.forEach(f => {
@@ -153,7 +155,7 @@ export default function PdfSplitTool() {
         <div className={styles.resultSection}>
           <div className={styles.resultSummary}>
             <div className={styles.resultIcon}>✓</div>
-            <h3>Split into {resultFiles.length} files</h3>
+            <h3>{t('pdfSplit.splitResult', { count: String(resultFiles.length) })}</h3>
           </div>
           <div className={styles.resultList}>
             {resultFiles.map((f, i) => (
@@ -176,19 +178,19 @@ export default function PdfSplitTool() {
           </div>
           <div className={styles.resultActions}>
             <button className="btn btn-primary" onClick={handleDownloadAll}>
-              Download All ({resultFiles.length} files)
+              {t('pdfSplit.downloadAll', { count: String(resultFiles.length) })}
             </button>
             <ToolSuccess
               outputFiles={resultFiles}
               sourceTool="pdf_split"
               onDownload={handleDownloadAll}
               crossLinks={[
-                { icon: '', label: 'Merge PDFs', href: '/pdf/merge' },
+                { icon: '', label: t('pdfSplit.mergeLink'), href: localizedHref('/pdf/merge') },
               ]}
             />
           </div>
           <button className={styles.resetButton} onClick={handleReset}>
-            Split another PDF
+            {t('pdfSplit.splitAnother')}
           </button>
         </div>
       </div>
@@ -211,8 +213,8 @@ export default function PdfSplitTool() {
     return (
       <div className={styles.container}>
         <div className={styles.errorSection}>
-          <p className={styles.errorText}>Error: {statusText}</p>
-          <button className={styles.resetButton} onClick={handleReset}>Try again</button>
+          <p className={styles.errorText}>{statusText}</p>
+          <button className={styles.resetButton} onClick={handleReset}>{t('pdfSplit.tryAgain')}</button>
         </div>
       </div>
     );
@@ -233,8 +235,8 @@ export default function PdfSplitTool() {
           onClick={() => fileInputRef.current?.click()}
         >
           <span className={styles.dropzoneIcon}><ToolIcon name="scissors" size={32} /></span>
-          <p className={styles.dropzoneTitle}>Drop PDF to split</p>
-          <p className={styles.dropzoneSubtitle}>Single PDF file</p>
+          <p className={styles.dropzoneTitle}>{t('pdfSplit.dropTitle')}</p>
+          <p className={styles.dropzoneSubtitle}>{t('pdfSplit.dropSubtitle')}</p>
           <input
             ref={fileInputRef}
             type="file"
@@ -254,7 +256,7 @@ export default function PdfSplitTool() {
       {/* File info */}
       <div className={styles.fileInfo}>
         <span className={styles.fileName}>{file.name}</span>
-        <span className={styles.fileMeta}>{pageCount} pages</span>
+        <span className={styles.fileMeta}>{t('pdfSplit.pages', { count: String(pageCount) })}</span>
       </div>
 
       {/* Split mode selector */}
@@ -263,19 +265,19 @@ export default function PdfSplitTool() {
           className={`${styles.modeBtn} ${splitMode === 'extract' ? styles.modeBtnActive : ''}`}
           onClick={() => setSplitMode('extract')}
         >
-          Extract Pages
+          {t('pdfSplit.extractPages')}
         </button>
         <button
           className={`${styles.modeBtn} ${splitMode === 'every-n' ? styles.modeBtnActive : ''}`}
           onClick={() => setSplitMode('every-n')}
         >
-          Every N Pages
+          {t('pdfSplit.everyN')}
         </button>
         <button
           className={`${styles.modeBtn} ${splitMode === 'equal-parts' ? styles.modeBtnActive : ''}`}
           onClick={() => setSplitMode('equal-parts')}
         >
-          Equal Parts
+          {t('pdfSplit.equalParts')}
         </button>
       </div>
 
@@ -283,7 +285,7 @@ export default function PdfSplitTool() {
       <div className={styles.configPanel}>
         {splitMode === 'extract' && (
           <div className={styles.configField}>
-            <label className={styles.configLabel}>Pages to extract</label>
+            <label className={styles.configLabel}>{t('pdfSplit.pagesToExtract')}</label>
             <input
               className={styles.configInput}
               type="text"
@@ -292,14 +294,14 @@ export default function PdfSplitTool() {
               placeholder="e.g. 1, 3-5, 8"
             />
             <span className={styles.configHint}>
-              Comma-separated pages or ranges (1-{pageCount})
+              {t('pdfSplit.extractHint', { max: String(pageCount) })}
             </span>
           </div>
         )}
 
         {splitMode === 'every-n' && (
           <div className={styles.configField}>
-            <label className={styles.configLabel}>Pages per file</label>
+            <label className={styles.configLabel}>{t('pdfSplit.pagesPerFile')}</label>
             <input
               className={styles.configInput}
               type="number"
@@ -309,14 +311,14 @@ export default function PdfSplitTool() {
               onChange={(e) => setEveryN(Number(e.target.value))}
             />
             <span className={styles.configHint}>
-              Will create {Math.ceil(pageCount / Math.max(1, everyN))} files
+              {t('pdfSplit.willCreate', { count: String(Math.ceil(pageCount / Math.max(1, everyN))) })}
             </span>
           </div>
         )}
 
         {splitMode === 'equal-parts' && (
           <div className={styles.configField}>
-            <label className={styles.configLabel}>Number of parts</label>
+            <label className={styles.configLabel}>{t('pdfSplit.numberOfParts')}</label>
             <input
               className={styles.configInput}
               type="number"
@@ -326,14 +328,14 @@ export default function PdfSplitTool() {
               onChange={(e) => setEqualParts(Number(e.target.value))}
             />
             <span className={styles.configHint}>
-              ~{Math.ceil(pageCount / Math.max(2, equalParts))} pages per part
+              {t('pdfSplit.pagesPerPart', { count: String(Math.ceil(pageCount / Math.max(2, equalParts))) })}
             </span>
           </div>
         )}
       </div>
 
       <button className="btn btn-primary btn-lg" onClick={handleSplit} style={{ width: '100%' }}>
-        Split PDF →
+        {t('pdfSplit.splitButton')}
       </button>
     </div>
   );

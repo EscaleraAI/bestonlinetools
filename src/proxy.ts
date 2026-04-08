@@ -13,7 +13,7 @@ const IGNORED_PATHS = [
 ];
 
 function shouldIgnore(pathname: string): boolean {
-  return IGNORED_PATHS.some((p) => pathname.startsWith(p));
+  return IGNORED_PATHS.some((p) => pathname.startsWith(p)) || pathname.includes('.');
 }
 
 /**
@@ -56,13 +56,38 @@ export function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Read locale cookie (set when user manually switches language)
+  const cookieLocale = request.cookies.get('locale')?.value as Locale | undefined;
+
   // Check if path already has a non-default locale prefix
   const pathLocale = getLocaleFromPath(pathname);
+
   if (pathLocale) {
-    return NextResponse.next();
+    // URL already has locale prefix — persist it in cookie and serve
+    const response = NextResponse.next();
+    response.cookies.set('locale', pathLocale, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: 'lax',
+    });
+    return response;
   }
 
-  // Root "/" → redirect to preferred locale if not English
+  // No locale prefix in URL — check cookie or Accept-Language
+  if (cookieLocale && (i18n.locales as readonly string[]).includes(cookieLocale) && cookieLocale !== i18n.defaultLocale) {
+    // User previously chose a non-default locale → redirect
+    const url = request.nextUrl.clone();
+    url.pathname = `/${cookieLocale}${pathname}`;
+    const response = NextResponse.redirect(url);
+    response.cookies.set('locale', cookieLocale, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 365,
+      sameSite: 'lax',
+    });
+    return response;
+  }
+
+  // Root "/" with no cookie → check Accept-Language
   if (pathname === '/') {
     const preferred = getPreferredLocale(request);
     if (preferred !== i18n.defaultLocale) {
@@ -72,8 +97,14 @@ export function proxy(request: NextRequest) {
     }
   }
 
-  // English content or any non-locale path → serve as-is
-  return NextResponse.next();
+  // English content or any non-locale path → serve as-is, persist default
+  const response = NextResponse.next();
+  response.cookies.set('locale', i18n.defaultLocale, {
+    path: '/',
+    maxAge: 60 * 60 * 24 * 365,
+    sameSite: 'lax',
+  });
+  return response;
 }
 
 export const config = {

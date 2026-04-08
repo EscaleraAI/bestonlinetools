@@ -1,0 +1,12 @@
+Key,English,Current German,Recommended German,Issue / Reasoning
+home.dataToolsDesc,"Format and validate JSON... count words, and change text case.",JSON formatieren... Wörter zählen und Textfall ändern.,JSON formatieren... Wörter zählen und Groß-/Kleinschreibung ändern.,"'Textfall' is a direct, literal translation of 'text case' and does not exist in German."
+imageBase64.copyRaw,Copy Raw,Roh kopieren,Rohdaten kopieren (or) Als Text kopieren,'Roh' means 'raw' as in uncooked food or unrefined materials. It sounds unnatural for software.
+ocr.confidence,Confidence: {value}%,Konfidenz: {value}%,Genauigkeit: {value}% (or) Sicherheit: {value}%,"'Konfidenz' is highly statistical and academic, feeling overly technical for a consumer UI."
+ocr.features[2],Confidence score for recognition accuracy,Konfidenzwert für Erkennungsgenauigkeit,Genauigkeitswert für die Texterkennung,Same as above; 'Konfidenz' is too academic.
+coloringPage.sensitivity,Edge Sensitivity,Kantenerkennung,Kanten-Empfindlichkeit (or) Detailgrad,"'Erkennung' means detection, not sensitivity. The slider controls the sensitivity."
+pdfMerge.dropTitle (and similar drop strings),Drop PDFs to merge,PDFs zum Zusammenführen ablegen,"PDFs hier ablegen, um sie zusammenzuführen",'XYZ zum [Aktion] ablegen' sounds like a command for a machine. Adding 'hier' and a relative clause flows much better.
+home.step1Title,Choose & Drop,Auswählen & Ablegen,Drag & Drop (or) Auswählen & Hineinziehen,Nobody says 'Ablegen' in software for dropping files.
+home.heroTitle,Convert. Transform.,Konvertieren. Transformieren.,Konvertieren. Bearbeiten. (or) Konvertieren. Umwandeln.,"'Transformieren' usually relates to mathematics, physics, or sci-fi."
+home.heroAccent,Privately.,Privat.,Sicher. (or) Vertraulich. (or) 100 % Datenschutz.,"In German, 'privat' usually means your personal life, not 'Privacy-first/Securely'."
+toolPage.defaultFeature4 (and other Powered by strings),Powered by WebAssembly for near-native speed,Angetrieben von WebAssembly für native Geschwindigkeit,Basierend auf WebAssembly... (or) Mit der Leistung von... (or keep) Powered by WebAssembly...,'Angetrieben' sounds like a mechanical engine being driven.
+registry.coloring-page.name (and similar),Coloring Page,Ausmalseite,Ausmalbild (or) Malvorlage,'Ausmalbild' or 'Malvorlage' are much more natural and native conversational terms.

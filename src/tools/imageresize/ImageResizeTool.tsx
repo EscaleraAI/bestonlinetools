@@ -3,6 +3,7 @@
 import { useState, useRef, useCallback } from 'react';
 import ToolSuccess from '@/components/ToolSuccess';
 import ToolIcon from '@/components/ui/ToolIcon';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './ImageResizeTool.module.css';
 
 type ResizeMode = 'dimensions' | 'percentage' | 'preset';
@@ -26,6 +27,7 @@ const PRESETS: Preset[] = [
 ];
 
 export default function ImageResizeTool() {
+  const { t } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [origWidth, setOrigWidth] = useState(0);
@@ -62,16 +64,12 @@ export default function ImageResizeTool() {
 
   const handleWidthChange = (w: number) => {
     setTargetWidth(w);
-    if (keepAspect && origWidth > 0) {
-      setTargetHeight(Math.round((w / origWidth) * origHeight));
-    }
+    if (keepAspect && origWidth > 0) setTargetHeight(Math.round((w / origWidth) * origHeight));
   };
 
   const handleHeightChange = (h: number) => {
     setTargetHeight(h);
-    if (keepAspect && origHeight > 0) {
-      setTargetWidth(Math.round((h / origHeight) * origWidth));
-    }
+    if (keepAspect && origHeight > 0) setTargetWidth(Math.round((h / origHeight) * origWidth));
   };
 
   const getOutputDimensions = (): { w: number; h: number } => {
@@ -89,58 +87,35 @@ export default function ImageResizeTool() {
     if (!file || !preview) return;
     const { w, h } = getOutputDimensions();
     if (w <= 0 || h <= 0) return;
-
     try {
       const img = new window.Image();
-      await new Promise<void>((resolve) => {
-        img.onload = () => resolve();
-        img.src = preview;
-      });
-
+      await new Promise<void>((resolve) => { img.onload = () => resolve(); img.src = preview; });
       const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
+      canvas.width = w; canvas.height = h;
       const ctx = canvas.getContext('2d')!;
       ctx.imageSmoothingEnabled = true;
       ctx.imageSmoothingQuality = 'high';
       ctx.drawImage(img, 0, 0, w, h);
-
       const mimeType = `image/${outputFormat}`;
-      const blob = await new Promise<Blob>((resolve) => {
-        canvas.toBlob(b => resolve(b!), mimeType, quality);
-      });
-
+      const blob = await new Promise<Blob>((resolve) => { canvas.toBlob(b => resolve(b!), mimeType, quality); });
       const ext = outputFormat === 'jpeg' ? 'jpg' : outputFormat;
       const name = file.name.replace(/\.[^.]+$/, '') + `_${w}x${h}.${ext}`;
       const outFile = new File([blob], name, { type: mimeType });
       const url = URL.createObjectURL(blob);
-
-      setResultUrl(url);
-      setResultFile(outFile);
-      setResultDimensions({ w, h });
-      setStatus('done');
-    } catch {
-      setStatus('error');
-    }
+      setResultUrl(url); setResultFile(outFile); setResultDimensions({ w, h }); setStatus('done');
+    } catch { setStatus('error'); }
   }, [file, preview, mode, targetWidth, targetHeight, percentage, presetIndex, outputFormat, quality, origWidth, origHeight]);
 
   const handleDownload = useCallback(() => {
     if (!resultUrl || !resultFile) return;
     const a = document.createElement('a');
-    a.href = resultUrl;
-    a.download = resultFile.name;
-    a.click();
+    a.href = resultUrl; a.download = resultFile.name; a.click();
   }, [resultUrl, resultFile]);
 
   const handleReset = useCallback(() => {
     if (resultUrl) URL.revokeObjectURL(resultUrl);
     if (preview) URL.revokeObjectURL(preview);
-    setFile(null);
-    setPreview(null);
-    setResultUrl(null);
-    setResultFile(null);
-    setResultDimensions(null);
-    setStatus('idle');
+    setFile(null); setPreview(null); setResultUrl(null); setResultFile(null); setResultDimensions(null); setStatus('idle');
   }, [resultUrl, preview]);
 
   const formatSize = (bytes: number) => {
@@ -149,15 +124,13 @@ export default function ImageResizeTool() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  // --- RENDER ---
-
   if (status === 'done' && resultFile && resultDimensions) {
     return (
       <div className={styles.container}>
         <div className={styles.resultSection}>
           <div className={styles.resultSummary}>
             <div className={styles.resultIcon}>✓</div>
-            <h3>Resized to {resultDimensions.w} × {resultDimensions.h}</h3>
+            <h3>{t('imageResize.resizedTo', { w: String(resultDimensions.w), h: String(resultDimensions.h) })}</h3>
             <p>{formatSize(resultFile.size)}</p>
           </div>
           {resultUrl && (
@@ -165,13 +138,8 @@ export default function ImageResizeTool() {
               <img src={resultUrl} alt="Resized" className={styles.resultPreview} />
             </div>
           )}
-          <ToolSuccess
-            outputFiles={[resultFile]}
-            sourceTool="image_resize"
-            onDownload={handleDownload}
-            crossLinks={[]}
-          />
-          <button className={styles.resetButton} onClick={handleReset}>Resize another image</button>
+          <ToolSuccess outputFiles={[resultFile]} sourceTool="image_resize" onDownload={handleDownload} crossLinks={[]} />
+          <button className={styles.resetButton} onClick={handleReset}>{t('imageResize.resizeAnother')}</button>
         </div>
       </div>
     );
@@ -181,8 +149,8 @@ export default function ImageResizeTool() {
     return (
       <div className={styles.container}>
         <div className={styles.errorSection}>
-          <p className={styles.errorText}>Resize failed. Try a different image.</p>
-          <button className={styles.resetButton} onClick={handleReset}>Try again</button>
+          <p className={styles.errorText}>{t('imageResize.resizeError')}</p>
+          <button className={styles.resetButton} onClick={handleReset}>{t('imageResize.tryAgain')}</button>
         </div>
       </div>
     );
@@ -191,22 +159,16 @@ export default function ImageResizeTool() {
   if (!file) {
     return (
       <div className={styles.container}>
-        <div
-          className={styles.dropzone}
+        <div className={styles.dropzone}
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => { e.preventDefault(); handleFileSelect(e.dataTransfer.files); }}
-          onClick={() => fileInputRef.current?.click()}
-        >
+          onClick={() => fileInputRef.current?.click()}>
           <span className={styles.dropzoneIcon}><ToolIcon name="maximize" size={32} /></span>
-          <p className={styles.dropzoneTitle}>Drop an image to resize</p>
-          <p className={styles.dropzoneSubtitle}>Supports JPG, PNG, WebP, BMP, GIF</p>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
+          <p className={styles.dropzoneTitle}>{t('imageResize.dropTitle')}</p>
+          <p className={styles.dropzoneSubtitle}>{t('imageResize.dropSubtitle')}</p>
+          <input ref={fileInputRef} type="file" accept="image/*"
             onChange={(e) => { if (e.target.files) handleFileSelect(e.target.files); }}
-            className={styles.hiddenInput}
-          />
+            className={styles.hiddenInput} />
         </div>
       </div>
     );
@@ -216,24 +178,20 @@ export default function ImageResizeTool() {
 
   return (
     <div className={styles.container}>
-      {/* Image preview */}
       <div className={styles.previewBox}>
         <img src={preview!} alt="Original" className={styles.originalPreview} />
         <div className={styles.previewInfo}>
-          Original: {origWidth} × {origHeight} · {formatSize(file.size)}
+          {t('imageResize.original')}: {origWidth} × {origHeight} · {formatSize(file.size)}
         </div>
       </div>
 
-      {/* Settings */}
       <div className={styles.settingsPanel}>
         <div className={styles.modeToggle}>
           {(['dimensions', 'percentage', 'preset'] as ResizeMode[]).map(m => (
-            <button
-              key={m}
+            <button key={m}
               className={`${styles.modeButton} ${mode === m ? styles.modeActive : ''}`}
-              onClick={() => setMode(m)}
-            >
-              {m === 'dimensions' ? 'Dimensions' : m === 'percentage' ? 'Percentage' : 'Presets'}
+              onClick={() => setMode(m)}>
+              {m === 'dimensions' ? t('imageResize.dimensions') : m === 'percentage' ? t('imageResize.percentage') : t('imageResize.presets')}
             </button>
           ))}
         </div>
@@ -241,14 +199,14 @@ export default function ImageResizeTool() {
         {mode === 'dimensions' && (
           <div className={styles.dimFields}>
             <div className={styles.field}>
-              <label className={styles.label}>Width (px)</label>
+              <label className={styles.label}>{t('imageResize.widthPx')}</label>
               <input type="number" className={styles.input} value={targetWidth} min={1} onChange={(e) => handleWidthChange(Number(e.target.value) || 1)} />
             </div>
             <div className={styles.lockIcon} onClick={() => setKeepAspect(!keepAspect)}>
               {keepAspect ? '🔗' : '🔓'}
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>Height (px)</label>
+              <label className={styles.label}>{t('imageResize.heightPx')}</label>
               <input type="number" className={styles.input} value={targetHeight} min={1} onChange={(e) => handleHeightChange(Number(e.target.value) || 1)} />
             </div>
           </div>
@@ -256,9 +214,9 @@ export default function ImageResizeTool() {
 
         {mode === 'percentage' && (
           <div className={styles.field}>
-            <label className={styles.label}>Scale: {percentage}%</label>
+            <label className={styles.label}>{t('imageResize.scale', { value: String(percentage) })}</label>
             <input type="range" className={styles.range} min={1} max={400} value={percentage} onChange={(e) => setPercentage(Number(e.target.value))} />
-            <span className={styles.rangeValue}>Output: {dims.w} × {dims.h}</span>
+            <span className={styles.rangeValue}>{t('imageResize.output', { w: String(dims.w), h: String(dims.h) })}</span>
           </div>
         )}
 
@@ -274,7 +232,7 @@ export default function ImageResizeTool() {
 
         <div className={styles.fieldRow}>
           <div className={styles.field}>
-            <label className={styles.label}>Format</label>
+            <label className={styles.label}>{t('imageResize.format')}</label>
             <select className={styles.select} value={outputFormat} onChange={(e) => setOutputFormat(e.target.value as 'png' | 'jpeg' | 'webp')}>
               <option value="png">PNG</option>
               <option value="jpeg">JPG</option>
@@ -283,7 +241,7 @@ export default function ImageResizeTool() {
           </div>
           {outputFormat !== 'png' && (
             <div className={styles.field}>
-              <label className={styles.label}>Quality: {Math.round(quality * 100)}%</label>
+              <label className={styles.label}>{t('imageResize.qualityLabel', { value: String(Math.round(quality * 100)) })}</label>
               <input type="range" className={styles.range} min={0.1} max={1} step={0.05} value={quality} onChange={(e) => setQuality(Number(e.target.value))} />
             </div>
           )}
@@ -291,9 +249,9 @@ export default function ImageResizeTool() {
       </div>
 
       <div className={styles.actionBar}>
-        <button className={styles.resetButton} onClick={handleReset}>Change image</button>
+        <button className={styles.resetButton} onClick={handleReset}>{t('imageResize.changeImage')}</button>
         <button className="btn btn-primary btn-lg" onClick={handleResize}>
-          Resize to {dims.w} × {dims.h} →
+          {t('imageResize.resizeButton', { w: String(dims.w), h: String(dims.h) })}
         </button>
       </div>
     </div>

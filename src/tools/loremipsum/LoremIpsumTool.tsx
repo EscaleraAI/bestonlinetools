@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './LoremIpsumTool.module.css';
 
 const LOREM = [
@@ -17,10 +18,17 @@ const LOREM = [
 type Mode = 'paragraphs' | 'sentences' | 'words';
 
 export default function LoremIpsumTool() {
+  const { t } = useLocale();
   const [mode, setMode] = useState<Mode>('paragraphs');
   const [count, setCount] = useState(3);
   const [output, setOutput] = useState('');
   const [copied, setCopied] = useState(false);
+
+  const modeLabels: Record<Mode, string> = {
+    paragraphs: t('loremIpsum.paragraphs'),
+    sentences: t('loremIpsum.sentences'),
+    words: t('loremIpsum.words'),
+  };
 
   const generate = useCallback(() => {
     let result = '';
@@ -50,30 +58,30 @@ export default function LoremIpsumTool() {
     <div className={styles.container}>
       <div className={styles.controls}>
         <div className={styles.field}>
-          <label className={styles.label}>Type</label>
+          <label className={styles.label}>{t('loremIpsum.type')}</label>
           <div className={styles.modeToggle}>
             {(['paragraphs', 'sentences', 'words'] as Mode[]).map(m => (
               <button key={m} className={`${styles.modeBtn} ${mode === m ? styles.modeActive : ''}`}
                 onClick={() => setMode(m)}>
-                {m.charAt(0).toUpperCase() + m.slice(1)}
+                {modeLabels[m]}
               </button>
             ))}
           </div>
         </div>
         <div className={styles.field}>
-          <label className={styles.label}>Count</label>
+          <label className={styles.label}>{t('loremIpsum.count')}</label>
           <input type="number" className={styles.input} value={count} min={1} max={100}
             onChange={(e) => setCount(Math.max(1, Number(e.target.value)))} />
         </div>
-        <button className="btn btn-primary" onClick={generate}>Generate</button>
+        <button className="btn btn-primary" onClick={generate}>{t('loremIpsum.generate')}</button>
       </div>
 
       {output && (
         <>
           <textarea className={styles.output} value={output} readOnly rows={12} />
           <div className={styles.actionBar}>
-            <span className={styles.meta}>{output.split(/\s+/).length} words · {output.length} chars</span>
-            <button className={styles.copyBtn} onClick={handleCopy}>{copied ? '✓ Copied!' : 'Copy'}</button>
+            <span className={styles.meta}>{t('loremIpsum.meta', { words: String(output.split(/\s+/).length), chars: String(output.length) })}</span>
+            <button className={styles.copyBtn} onClick={handleCopy}>{copied ? t('loremIpsum.copied') : t('loremIpsum.copy')}</button>
           </div>
         </>
       )}

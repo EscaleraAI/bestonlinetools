@@ -4,16 +4,18 @@ import { useState, useRef, useCallback } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import ToolSuccess from '@/components/ToolSuccess';
 import ToolIcon from '@/components/ui/ToolIcon';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './SignPdfTool.module.css';
 
 export default function SignPdfTool() {
+  const { t } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [pageCount, setPageCount] = useState(0);
   const [signaturePng, setSignaturePng] = useState<string | null>(null);
   const [signPage, setSignPage] = useState(1);
-  const [signX, setSignX] = useState(50); // percentage
-  const [signY, setSignY] = useState(85); // percentage from top
-  const [signScale, setSignScale] = useState(30); // percentage of page width
+  const [signX, setSignX] = useState(50);
+  const [signY, setSignY] = useState(85);
+  const [signScale, setSignScale] = useState(30);
   const [isDrawing, setIsDrawing] = useState(false);
   const [status, setStatus] = useState<'idle' | 'loading' | 'processing' | 'done' | 'error'>('idle');
   const [statusText, setStatusText] = useState('');
@@ -36,11 +38,10 @@ export default function SignPdfTool() {
       setStatus('idle');
     } catch {
       setStatus('error');
-      setStatusText('Failed to read PDF.');
+      setStatusText(t('signPdf.readError'));
     }
-  }, []);
+  }, [t]);
 
-  // Canvas drawing for signature
   const getCanvasPos = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current!;
     const rect = canvas.getBoundingClientRect();
@@ -95,12 +96,11 @@ export default function SignPdfTool() {
   const handleApply = useCallback(async () => {
     if (!file || !signaturePng) return;
     setStatus('processing');
-    setStatusText('Adding signature...');
+    setStatusText(t('signPdf.adding'));
     try {
       const buffer = await file.arrayBuffer();
       const pdfDoc = await PDFDocument.load(buffer, { ignoreEncryption: true });
 
-      // Convert signature canvas to PNG bytes
       const sigResponse = await fetch(signaturePng);
       const sigBytes = new Uint8Array(await sigResponse.arrayBuffer());
       const sigImage = await pdfDoc.embedPng(sigBytes);
@@ -130,9 +130,9 @@ export default function SignPdfTool() {
       setStatus('done');
     } catch (err: unknown) {
       setStatus('error');
-      setStatusText(err instanceof Error ? err.message : 'Failed to sign PDF');
+      setStatusText(err instanceof Error ? err.message : t('signPdf.addError'));
     }
-  }, [file, signaturePng, signPage, signX, signY, signScale]);
+  }, [file, signaturePng, signPage, signX, signY, signScale, t]);
 
   const handleDownload = useCallback(() => {
     if (!resultUrl || !resultFile) return;
@@ -163,11 +163,11 @@ export default function SignPdfTool() {
         <div className={styles.resultSection}>
           <div className={styles.resultSummary}>
             <div className={styles.resultIcon}>✓</div>
-            <h3>PDF signed successfully</h3>
+            <h3>{t('signPdf.success')}</h3>
             <p>{formatSize(resultFile.size)}</p>
           </div>
           <ToolSuccess outputFiles={[resultFile]} sourceTool="sign_pdf" onDownload={handleDownload} crossLinks={[]} />
-          <button className={styles.resetButton} onClick={handleReset}>Sign another PDF</button>
+          <button className={styles.resetButton} onClick={handleReset}>{t('signPdf.signAnother')}</button>
         </div>
       </div>
     );
@@ -185,8 +185,8 @@ export default function SignPdfTool() {
     return (
       <div className={styles.container}>
         <div className={styles.errorSection}>
-          <p className={styles.errorText}>Error: {statusText}</p>
-          <button className={styles.resetButton} onClick={handleReset}>Try again</button>
+          <p className={styles.errorText}>{statusText}</p>
+          <button className={styles.resetButton} onClick={handleReset}>{t('signPdf.tryAgain')}</button>
         </div>
       </div>
     );
@@ -200,8 +200,8 @@ export default function SignPdfTool() {
           onDrop={(e) => { e.preventDefault(); handleFileSelect(e.dataTransfer.files); }}
           onClick={() => fileInputRef.current?.click()}>
           <span className={styles.dropzoneIcon}><ToolIcon name="pen-tool" size={32} /></span>
-          <p className={styles.dropzoneTitle}>Drop a PDF to sign</p>
-          <p className={styles.dropzoneSubtitle}>PDF files only</p>
+          <p className={styles.dropzoneTitle}>{t('signPdf.dropTitle')}</p>
+          <p className={styles.dropzoneSubtitle}>{t('signPdf.dropSubtitle')}</p>
           <input ref={fileInputRef} type="file" accept="application/pdf"
             onChange={(e) => { if (e.target.files) handleFileSelect(e.target.files); }}
             className={styles.hiddenInput} />
@@ -216,15 +216,14 @@ export default function SignPdfTool() {
         <ToolIcon name="file-text" size={20} />
         <div>
           <span className={styles.fileName}>{file.name}</span>
-          <span className={styles.fileMeta}>{pageCount} pages · {formatSize(file.size)}</span>
+          <span className={styles.fileMeta}>{t('signPdf.pages', { count: String(pageCount) })} · {formatSize(file.size)}</span>
         </div>
       </div>
 
-      {/* Signature pad */}
       <div className={styles.signatureSection}>
         <div className={styles.sectionHeader}>
-          <h3 className={styles.settingsTitle}>Draw Your Signature</h3>
-          <button className={styles.clearBtn} onClick={clearSignature}>Clear</button>
+          <h3 className={styles.settingsTitle}>{t('signPdf.drawTitle')}</h3>
+          <button className={styles.clearBtn} onClick={clearSignature}>{t('signPdf.clear')}</button>
         </div>
         <canvas
           ref={canvasRef}
@@ -241,29 +240,28 @@ export default function SignPdfTool() {
         />
       </div>
 
-      {/* Placement settings */}
       <div className={styles.settingsPanel}>
-        <h3 className={styles.settingsTitle}>Placement</h3>
+        <h3 className={styles.settingsTitle}>{t('signPdf.placement')}</h3>
         <div className={styles.fieldRow}>
           <div className={styles.field}>
-            <label className={styles.label}>Page</label>
+            <label className={styles.label}>{t('signPdf.page')}</label>
             <input type="number" className={styles.input} value={signPage} min={1} max={pageCount}
               onChange={(e) => setSignPage(Math.min(Number(e.target.value) || 1, pageCount))} />
           </div>
           <div className={styles.field}>
-            <label className={styles.label}>Size ({signScale}% of page)</label>
+            <label className={styles.label}>{t('signPdf.size', { value: String(signScale) })}</label>
             <input type="range" className={styles.range} min={10} max={80} value={signScale}
               onChange={(e) => setSignScale(Number(e.target.value))} />
           </div>
         </div>
         <div className={styles.fieldRow}>
           <div className={styles.field}>
-            <label className={styles.label}>Horizontal ({signX}%)</label>
+            <label className={styles.label}>{t('signPdf.horizontal', { value: String(signX) })}</label>
             <input type="range" className={styles.range} min={10} max={90} value={signX}
               onChange={(e) => setSignX(Number(e.target.value))} />
           </div>
           <div className={styles.field}>
-            <label className={styles.label}>Vertical ({signY}%)</label>
+            <label className={styles.label}>{t('signPdf.vertical', { value: String(signY) })}</label>
             <input type="range" className={styles.range} min={10} max={95} value={signY}
               onChange={(e) => setSignY(Number(e.target.value))} />
           </div>
@@ -271,9 +269,9 @@ export default function SignPdfTool() {
       </div>
 
       <div className={styles.actionBar}>
-        <button className={styles.resetButton} onClick={handleReset}>Change file</button>
+        <button className={styles.resetButton} onClick={handleReset}>{t('signPdf.changeFile')}</button>
         <button className="btn btn-primary btn-lg" onClick={handleApply} disabled={!signaturePng}>
-          Sign PDF →
+          {t('signPdf.signButton')}
         </button>
       </div>
     </div>

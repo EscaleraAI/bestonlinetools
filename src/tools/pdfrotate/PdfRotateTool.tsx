@@ -3,11 +3,13 @@
 import { useState, useRef, useCallback } from 'react';
 import { PDFDocument, degrees } from 'pdf-lib';
 import ToolIcon from '@/components/ui/ToolIcon';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './PdfRotateTool.module.css';
 
 type Rotation = 0 | 90 | 180 | 270;
 
 export default function PdfRotateTool() {
+  const { t } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [pageCount, setPageCount] = useState(0);
   const [rotation, setRotation] = useState<Rotation>(90);
@@ -88,16 +90,16 @@ export default function PdfRotateTool() {
       <div className={styles.container}>
         <div className={styles.resultSection}>
           <div className={styles.resultIcon}>✓</div>
-          <h3>PDF rotated successfully</h3>
-          <button className="btn btn-primary btn-lg" onClick={handleDownload}>Download Rotated PDF</button>
-          <button className={styles.resetBtn} onClick={handleReset}>Rotate another PDF</button>
+          <h3>{t('pdfRotate.success')}</h3>
+          <button className="btn btn-primary btn-lg" onClick={handleDownload}>{t('pdfRotate.downloadButton')}</button>
+          <button className={styles.resetBtn} onClick={handleReset}>{t('pdfRotate.rotateAnother')}</button>
         </div>
       </div>
     );
   }
 
   if (status === 'processing') {
-    return <div className={styles.container}><p className={styles.statusText}>Rotating pages...</p></div>;
+    return <div className={styles.container}><p className={styles.statusText}>{t('pdfRotate.rotating')}</p></div>;
   }
 
   if (!file) {
@@ -108,7 +110,7 @@ export default function PdfRotateTool() {
           onDrop={e => { e.preventDefault(); handleFileSelect(e.dataTransfer.files); }}
           onClick={() => fileInputRef.current?.click()}>
           <span className={styles.dropzoneIcon}><ToolIcon name="rotate-cw" size={32} /></span>
-          <p className={styles.dropzoneTitle}>Drop a PDF to rotate pages</p>
+          <p className={styles.dropzoneTitle}>{t('pdfRotate.dropTitle')}</p>
           <input ref={fileInputRef} type="file" accept="application/pdf"
             onChange={e => { if (e.target.files) handleFileSelect(e.target.files); }}
             className={styles.hiddenInput} />
@@ -121,11 +123,11 @@ export default function PdfRotateTool() {
     <div className={styles.container}>
       <div className={styles.fileInfo}>
         <ToolIcon name="file-text" size={20} />
-        <span>{file.name} — {pageCount} pages</span>
+        <span>{file.name} — {t('pdfRotate.pages', { count: String(pageCount) })}</span>
       </div>
       <div className={styles.settings}>
         <div className={styles.field}>
-          <label className={styles.label}>Rotation</label>
+          <label className={styles.label}>{t('pdfRotate.rotation')}</label>
           <div className={styles.rotGrid}>
             {([90, 180, 270] as Rotation[]).map(r => (
               <button key={r} className={`${styles.rotBtn} ${rotation === r ? styles.rotActive : ''}`}
@@ -134,12 +136,12 @@ export default function PdfRotateTool() {
           </div>
         </div>
         <div className={styles.field}>
-          <label className={styles.label}>Apply to</label>
+          <label className={styles.label}>{t('pdfRotate.applyTo')}</label>
           <div className={styles.rotGrid}>
             <button className={`${styles.rotBtn} ${applyTo === 'all' ? styles.rotActive : ''}`}
-              onClick={() => setApplyTo('all')}>All Pages</button>
+              onClick={() => setApplyTo('all')}>{t('pdfRotate.allPages')}</button>
             <button className={`${styles.rotBtn} ${applyTo === 'custom' ? styles.rotActive : ''}`}
-              onClick={() => setApplyTo('custom')}>Custom</button>
+              onClick={() => setApplyTo('custom')}>{t('pdfRotate.custom')}</button>
           </div>
           {applyTo === 'custom' && (
             <input className={styles.input} value={customPages}
@@ -149,8 +151,8 @@ export default function PdfRotateTool() {
         </div>
       </div>
       <div className={styles.actionBar}>
-        <button className={styles.resetBtn} onClick={handleReset}>Change file</button>
-        <button className="btn btn-primary btn-lg" onClick={handleRotate}>Rotate →</button>
+        <button className={styles.resetBtn} onClick={handleReset}>{t('pdfRotate.changeFile')}</button>
+        <button className="btn btn-primary btn-lg" onClick={handleRotate}>{t('pdfRotate.rotateButton')}</button>
       </div>
     </div>
   );

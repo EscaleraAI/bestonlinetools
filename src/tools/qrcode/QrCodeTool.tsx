@@ -1,11 +1,10 @@
 'use client';
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import ToolIcon from '@/components/ui/ToolIcon';
 import styles from './QrCodeTool.module.css';
 
-// Minimal QR code generator using Canvas API
-// We use a dynamic import of the 'qrcode' package for encoding
 type QRCodeType = 'url' | 'text' | 'wifi';
 
 interface WifiConfig {
@@ -15,6 +14,7 @@ interface WifiConfig {
 }
 
 export default function QrCodeTool() {
+  const { t } = useLocale();
   const [qrType, setQrType] = useState<QRCodeType>('url');
   const [inputText, setInputText] = useState('https://');
   const [wifiConfig, setWifiConfig] = useState<WifiConfig>({ ssid: '', password: '', encryption: 'WPA' });
@@ -32,17 +32,15 @@ export default function QrCodeTool() {
     return inputText;
   };
 
-  // Generate QR using a lightweight inline encoder
   const generateQR = useCallback(async () => {
     const data = getData();
     if (!data || data === 'https://') {
-      setError('Please enter content for the QR code.');
+      setError(t('qrCode.enterContent'));
       return;
     }
     setError('');
 
     try {
-      // Dynamic import of qrcode library
       const QRCode = (await import('qrcode')).default;
       const canvas = canvasRef.current;
       if (!canvas) return;
@@ -50,10 +48,7 @@ export default function QrCodeTool() {
       await QRCode.toCanvas(canvas, data, {
         width: size,
         margin: 2,
-        color: {
-          dark: fgColor,
-          light: bgColor,
-        },
+        color: { dark: fgColor, light: bgColor },
         errorCorrectionLevel: 'M',
       });
 
@@ -61,9 +56,8 @@ export default function QrCodeTool() {
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Failed to generate QR code');
     }
-  }, [inputText, wifiConfig, qrType, size, fgColor, bgColor]);
+  }, [inputText, wifiConfig, qrType, size, fgColor, bgColor, t]);
 
-  // Auto-generate on input change
   useEffect(() => {
     const timer = setTimeout(() => {
       const data = getData();
@@ -102,9 +96,15 @@ export default function QrCodeTool() {
       a.click();
       URL.revokeObjectURL(url);
     } catch {
-      setError('Failed to generate SVG');
+      setError(t('qrCode.svgError'));
     }
-  }, [inputText, wifiConfig, qrType, size, fgColor, bgColor]);
+  }, [inputText, wifiConfig, qrType, size, fgColor, bgColor, t]);
+
+  const typeLabels: Record<QRCodeType, string> = {
+    url: t('qrCode.typeUrl'),
+    text: t('qrCode.typeText'),
+    wifi: t('qrCode.typeWifi'),
+  };
 
   return (
     <div className={styles.container}>
@@ -112,20 +112,20 @@ export default function QrCodeTool() {
         {/* Input panel */}
         <div className={styles.inputPanel}>
           <div className={styles.typeToggle}>
-            {(['url', 'text', 'wifi'] as QRCodeType[]).map(t => (
+            {(['url', 'text', 'wifi'] as QRCodeType[]).map(tp => (
               <button
-                key={t}
-                className={`${styles.typeButton} ${qrType === t ? styles.typeActive : ''}`}
-                onClick={() => { setQrType(t); setQrDataUrl(null); }}
+                key={tp}
+                className={`${styles.typeButton} ${qrType === tp ? styles.typeActive : ''}`}
+                onClick={() => { setQrType(tp); setQrDataUrl(null); }}
               >
-                {t === 'url' ? 'URL' : t === 'text' ? 'Text' : 'WiFi'}
+                {typeLabels[tp]}
               </button>
             ))}
           </div>
 
           {qrType === 'url' && (
             <div className={styles.field}>
-              <label className={styles.label}>URL</label>
+              <label className={styles.label}>{t('qrCode.urlLabel')}</label>
               <input
                 type="url"
                 className={styles.input}
@@ -138,12 +138,12 @@ export default function QrCodeTool() {
 
           {qrType === 'text' && (
             <div className={styles.field}>
-              <label className={styles.label}>Text</label>
+              <label className={styles.label}>{t('qrCode.textLabel')}</label>
               <textarea
                 className={styles.textarea}
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
-                placeholder="Enter any text..."
+                placeholder={t('qrCode.textPlaceholder')}
                 rows={4}
               />
             </div>
@@ -152,24 +152,24 @@ export default function QrCodeTool() {
           {qrType === 'wifi' && (
             <>
               <div className={styles.field}>
-                <label className={styles.label}>Network Name (SSID)</label>
+                <label className={styles.label}>{t('qrCode.ssid')}</label>
                 <input className={styles.input} value={wifiConfig.ssid}
                   onChange={(e) => setWifiConfig(prev => ({ ...prev, ssid: e.target.value }))}
                   placeholder="MyWiFiNetwork" />
               </div>
               <div className={styles.field}>
-                <label className={styles.label}>Password</label>
+                <label className={styles.label}>{t('qrCode.password')}</label>
                 <input className={styles.input} type="password" value={wifiConfig.password}
                   onChange={(e) => setWifiConfig(prev => ({ ...prev, password: e.target.value }))}
-                  placeholder="Enter WiFi password" />
+                  placeholder={t('qrCode.passwordPlaceholder')} />
               </div>
               <div className={styles.field}>
-                <label className={styles.label}>Encryption</label>
+                <label className={styles.label}>{t('qrCode.encryption')}</label>
                 <select className={styles.select} value={wifiConfig.encryption}
                   onChange={(e) => setWifiConfig(prev => ({ ...prev, encryption: e.target.value as 'WPA' | 'WEP' | 'nopass' }))}>
                   <option value="WPA">WPA/WPA2</option>
                   <option value="WEP">WEP</option>
-                  <option value="nopass">None</option>
+                  <option value="nopass">{t('qrCode.encryptionNone')}</option>
                 </select>
               </div>
             </>
@@ -177,7 +177,7 @@ export default function QrCodeTool() {
 
           <div className={styles.fieldRow}>
             <div className={styles.field}>
-              <label className={styles.label}>Size</label>
+              <label className={styles.label}>{t('qrCode.size')}</label>
               <select className={styles.select} value={size} onChange={(e) => setSize(Number(e.target.value))}>
                 <option value={200}>200px</option>
                 <option value={300}>300px</option>
@@ -187,15 +187,15 @@ export default function QrCodeTool() {
               </select>
             </div>
             <div className={styles.field}>
-              <label className={styles.label}>Colors</label>
+              <label className={styles.label}>{t('qrCode.colors')}</label>
               <div className={styles.colorPickers}>
                 <div className={styles.colorGroup}>
                   <input type="color" value={fgColor} onChange={(e) => setFgColor(e.target.value)} className={styles.colorInput} />
-                  <span className={styles.colorLabel}>Code</span>
+                  <span className={styles.colorLabel}>{t('qrCode.colorCode')}</span>
                 </div>
                 <div className={styles.colorGroup}>
                   <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} className={styles.colorInput} />
-                  <span className={styles.colorLabel}>BG</span>
+                  <span className={styles.colorLabel}>{t('qrCode.colorBg')}</span>
                 </div>
               </div>
             </div>
@@ -210,10 +210,10 @@ export default function QrCodeTool() {
           {qrDataUrl && (
             <div className={styles.downloadButtons}>
               <button className="btn btn-primary" onClick={handleDownloadPNG}>
-                Download PNG
+                {t('qrCode.downloadPng')}
               </button>
               <button className={styles.svgButton} onClick={handleDownloadSVG}>
-                Download SVG
+                {t('qrCode.downloadSvg')}
               </button>
             </div>
           )}

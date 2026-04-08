@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import ToolSuccess from '@/components/ToolSuccess';
 import ToolIcon from '@/components/ui/ToolIcon';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './PdfFormFillerTool.module.css';
 
 interface FormField {
@@ -14,6 +15,7 @@ interface FormField {
 }
 
 export default function PdfFormFillerTool() {
+  const { t } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [pageCount, setPageCount] = useState(0);
   const [fields, setFields] = useState<FormField[]>([]);
@@ -27,7 +29,7 @@ export default function PdfFormFillerTool() {
     const pdfFile = Array.from(files).find(f => f.type === 'application/pdf');
     if (!pdfFile) return;
     setStatus('loading');
-    setStatusText('Analyzing PDF form fields...');
+    setStatusText(t('pdfFormFiller.analyzing'));
     try {
       const buffer = await pdfFile.arrayBuffer();
       const pdfDoc = await PDFDocument.load(buffer, { ignoreEncryption: true });
@@ -63,7 +65,7 @@ export default function PdfFormFillerTool() {
 
       if (detected.length === 0) {
         setStatus('error');
-        setStatusText('No fillable form fields detected in this PDF. This tool works with PDFs that have interactive form fields.');
+        setStatusText(t('pdfFormFiller.noFields'));
         return;
       }
 
@@ -72,9 +74,9 @@ export default function PdfFormFillerTool() {
       setStatus('idle');
     } catch {
       setStatus('error');
-      setStatusText('Failed to read PDF or detect form fields.');
+      setStatusText(t('pdfFormFiller.readError'));
     }
-  }, []);
+  }, [t]);
 
   const updateField = (index: number, value: string) => {
     setFields(prev => prev.map((f, i) => i === index ? { ...f, value } : f));
@@ -83,7 +85,7 @@ export default function PdfFormFillerTool() {
   const handleFill = useCallback(async () => {
     if (!file) return;
     setStatus('processing');
-    setStatusText('Filling form fields...');
+    setStatusText(t('pdfFormFiller.filling'));
     try {
       const buffer = await file.arrayBuffer();
       const pdfDoc = await PDFDocument.load(buffer, { ignoreEncryption: true });
@@ -117,9 +119,9 @@ export default function PdfFormFillerTool() {
       setStatus('done');
     } catch (err: unknown) {
       setStatus('error');
-      setStatusText(err instanceof Error ? err.message : 'Failed to fill form');
+      setStatusText(err instanceof Error ? err.message : t('pdfFormFiller.fillError'));
     }
-  }, [file, fields]);
+  }, [file, fields, t]);
 
   const handleDownload = useCallback(() => {
     if (!resultUrl || !resultFile) return;
@@ -148,11 +150,11 @@ export default function PdfFormFillerTool() {
         <div className={styles.resultSection}>
           <div className={styles.resultSummary}>
             <div className={styles.resultIcon}>✓</div>
-            <h3>{fields.length} fields filled</h3>
+            <h3>{t('pdfFormFiller.success', { count: String(fields.length) })}</h3>
             <p>{formatSize(resultFile.size)}</p>
           </div>
           <ToolSuccess outputFiles={[resultFile]} sourceTool="pdf_form_filler" onDownload={handleDownload} crossLinks={[]} />
-          <button className={styles.resetButton} onClick={handleReset}>Fill another PDF</button>
+          <button className={styles.resetButton} onClick={handleReset}>{t('pdfFormFiller.fillAnother')}</button>
         </div>
       </div>
     );
@@ -171,7 +173,7 @@ export default function PdfFormFillerTool() {
       <div className={styles.container}>
         <div className={styles.errorSection}>
           <p className={styles.errorText}>{statusText}</p>
-          <button className={styles.resetButton} onClick={handleReset}>Try again</button>
+          <button className={styles.resetButton} onClick={handleReset}>{t('pdfFormFiller.tryAgain')}</button>
         </div>
       </div>
     );
@@ -185,8 +187,8 @@ export default function PdfFormFillerTool() {
           onDrop={(e) => { e.preventDefault(); handleFileSelect(e.dataTransfer.files); }}
           onClick={() => fileInputRef.current?.click()}>
           <span className={styles.dropzoneIcon}><ToolIcon name="clipboard-list" size={32} /></span>
-          <p className={styles.dropzoneTitle}>Drop a PDF form to fill</p>
-          <p className={styles.dropzoneSubtitle}>Works with PDFs that have fillable form fields</p>
+          <p className={styles.dropzoneTitle}>{t('pdfFormFiller.dropTitle')}</p>
+          <p className={styles.dropzoneSubtitle}>{t('pdfFormFiller.dropSubtitle')}</p>
           <input ref={fileInputRef} type="file" accept="application/pdf"
             onChange={(e) => { if (e.target.files) handleFileSelect(e.target.files); }}
             className={styles.hiddenInput} />
@@ -201,12 +203,12 @@ export default function PdfFormFillerTool() {
         <ToolIcon name="file-text" size={20} />
         <div>
           <span className={styles.fileName}>{file.name}</span>
-          <span className={styles.fileMeta}>{pageCount} pages · {fields.length} fields · {formatSize(file.size)}</span>
+          <span className={styles.fileMeta}>{t('pdfFormFiller.pages', { count: String(pageCount) })} · {t('pdfFormFiller.fields', { count: String(fields.length) })} · {formatSize(file.size)}</span>
         </div>
       </div>
 
       <div className={styles.fieldsList}>
-        <h3 className={styles.settingsTitle}>Form Fields ({fields.length})</h3>
+        <h3 className={styles.settingsTitle}>{t('pdfFormFiller.fieldsTitle', { count: String(fields.length) })}</h3>
         {fields.map((field, i) => (
           <div key={field.name} className={styles.formField}>
             <label className={styles.fieldLabel}>
@@ -222,13 +224,13 @@ export default function PdfFormFillerTool() {
               <label className={styles.checkboxLabel}>
                 <input type="checkbox" checked={field.value === 'true'}
                   onChange={(e) => updateField(i, e.target.checked ? 'true' : 'false')} />
-                <span>Checked</span>
+                <span>{t('pdfFormFiller.checked')}</span>
               </label>
             )}
             {(field.type === 'dropdown' || field.type === 'radio') && field.options && (
               <select className={styles.select} value={field.value}
                 onChange={(e) => updateField(i, e.target.value)}>
-                <option value="">— Select —</option>
+                <option value="">{t('pdfFormFiller.select')}</option>
                 {field.options.map(o => <option key={o} value={o}>{o}</option>)}
               </select>
             )}
@@ -237,9 +239,9 @@ export default function PdfFormFillerTool() {
       </div>
 
       <div className={styles.actionBar}>
-        <button className={styles.resetButton} onClick={handleReset}>Change file</button>
+        <button className={styles.resetButton} onClick={handleReset}>{t('pdfFormFiller.changeFile')}</button>
         <button className="btn btn-primary btn-lg" onClick={handleFill}>
-          Fill & Download →
+          {t('pdfFormFiller.fillButton')}
         </button>
       </div>
     </div>

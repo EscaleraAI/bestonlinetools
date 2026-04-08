@@ -10,6 +10,8 @@ export interface ToolContent {
   faqs: Array<{ q: string; a: string }>;  // Expanded FAQ entries
 }
 
+import type { Locale } from '../i18n';
+
 const toolContent: Record<string, ToolContent> = {
   svg_vectorizer: {
     howItWorks: [
@@ -735,6 +737,24 @@ const toolContent: Record<string, ToolContent> = {
   },
 };
 
-export function getToolContent(toolId: string): ToolContent | null {
+const localizedContent: Record<string, Record<string, ToolContent>> = {};
+
+try {
+  // Dynamic imports don't work in this context, so we use require-style
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const deContent = require('./toolContent.de');
+  if (deContent?.toolContentDe) {
+    localizedContent['de'] = deContent.toolContentDe;
+  }
+} catch {
+  // German content not yet available — will fall back to English
+}
+
+export function getToolContent(toolId: string, locale?: Locale): ToolContent | null {
+  // Try locale-specific content first
+  if (locale && locale !== 'en' && localizedContent[locale]?.[toolId]) {
+    return localizedContent[locale][toolId];
+  }
+  // Fallback to English
   return toolContent[toolId] || null;
 }

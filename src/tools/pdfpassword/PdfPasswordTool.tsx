@@ -5,6 +5,7 @@ import { PDFDocument } from 'pdf-lib';
 import { encryptPDF } from '@pdfsmaller/pdf-encrypt-lite';
 import ToolSuccess from '@/components/ToolSuccess';
 import ToolIcon from '@/components/ui/ToolIcon';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './PdfPasswordTool.module.css';
 
 const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB
@@ -16,6 +17,7 @@ function formatSize(bytes: number): string {
 }
 
 export default function PdfPasswordTool() {
+  const { t, localizedHref } = useLocale();
   const [file, setFile] = useState<File | null>(null);
   const [pageCount, setPageCount] = useState<number | null>(null);
   const [password, setPassword] = useState('');
@@ -29,13 +31,13 @@ export default function PdfPasswordTool() {
   const loadFile = useCallback(async (newFile: File) => {
     if (newFile.type !== 'application/pdf') return;
     if (newFile.size > MAX_FILE_SIZE) {
-      setStatusText('File too large (max 200MB)');
+      setStatusText(t('pdfPassword.fileTooLarge'));
       setStatus('error');
       return;
     }
 
     setStatus('loading');
-    setStatusText('Reading PDF...');
+    setStatusText(t('pdfPassword.reading'));
 
     try {
       const buffer = await newFile.arrayBuffer();
@@ -45,32 +47,31 @@ export default function PdfPasswordTool() {
       setStatus('idle');
       setStatusText('');
     } catch {
-      setStatusText('Failed to read PDF — file may be corrupted');
+      setStatusText(t('pdfPassword.readError'));
       setStatus('error');
     }
-  }, []);
+  }, [t]);
 
   const handleProtect = useCallback(async () => {
     if (!file || !password) return;
     if (password !== confirmPassword) {
-      setStatusText('Passwords do not match');
+      setStatusText(t('pdfPassword.mismatch'));
       setStatus('error');
       return;
     }
     if (password.length < 4) {
-      setStatusText('Password must be at least 4 characters');
+      setStatusText(t('pdfPassword.tooShort'));
       setStatus('error');
       return;
     }
 
     setStatus('processing');
-    setStatusText('Encrypting PDF...');
+    setStatusText(t('pdfPassword.encrypting'));
 
     try {
       const buffer = await file.arrayBuffer();
       const pdfBytes = new Uint8Array(buffer);
 
-      // Encrypt using pdf-encrypt-lite (works client-side)
       const encryptedBytes = await encryptPDF(pdfBytes, password);
 
       const baseName = file.name.replace(/\.pdf$/i, '');
@@ -84,11 +85,11 @@ export default function PdfPasswordTool() {
       setStatus('done');
       setStatusText('');
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Encryption failed';
+      const message = err instanceof Error ? err.message : t('pdfPassword.encryptError');
       setStatusText(message);
       setStatus('error');
     }
-  }, [file, password, confirmPassword]);
+  }, [file, password, confirmPassword, t]);
 
   const handleDownload = useCallback(() => {
     if (!resultFile) return;
@@ -112,13 +113,12 @@ export default function PdfPasswordTool() {
 
   // --- RENDER ---
 
-  // Done state
   if (status === 'done' && resultFile) {
     return (
       <div className={styles.container}>
         <div className={styles.resultSection}>
           <div className={styles.resultIcon}><ToolIcon name="shield" size={28} /></div>
-          <h3 className={styles.resultTitle}>PDF Protected Successfully</h3>
+          <h3 className={styles.resultTitle}>{t('pdfPassword.success')}</h3>
           <p className={styles.resultMeta}>
             {resultFile.name} · {formatSize(resultFile.size)}
           </p>
@@ -128,20 +128,19 @@ export default function PdfPasswordTool() {
             sourceTool="pdf_password"
             onDownload={handleDownload}
             crossLinks={[
-              { icon: '📎', label: 'Merge PDFs', href: '/pdf/merge-pdf' },
-              { icon: '✂️', label: 'Split PDF', href: '/pdf/split-pdf' },
+              { icon: '📎', label: t('pdfPassword.mergeLink'), href: localizedHref('/pdf/merge-pdf') },
+              { icon: '✂️', label: t('pdfPassword.splitLink'), href: localizedHref('/pdf/split-pdf') },
             ]}
           />
 
           <button className={styles.resetButton} onClick={handleReset}>
-            Protect another PDF
+            {t('pdfPassword.protectAnother')}
           </button>
         </div>
       </div>
     );
   }
 
-  // Processing state
   if (status === 'processing') {
     return (
       <div className={styles.container}>
@@ -149,23 +148,20 @@ export default function PdfPasswordTool() {
           <div className={styles.spinner} />
           <p className={styles.statusText}>{statusText}</p>
           <p className={styles.privacyNote}>
-            <ToolIcon name="shield" size={14} /> All encryption happens locally — your PDF never leaves your device
+            <ToolIcon name="shield" size={14} /> {t('pdfPassword.privacyNote')}
           </p>
         </div>
       </div>
     );
   }
 
-  // Idle — dropzone + password form
   return (
     <div className={styles.container}>
-      {/* Privacy badge */}
       <div className={styles.privacyBadge}>
-        <ToolIcon name="shield" size={14} /> Private — encryption happens in your browser
+        <ToolIcon name="shield" size={14} /> {t('pdfPassword.privacyBadge')}
       </div>
 
       {!file ? (
-        /* Dropzone */
         <div
           className={`${styles.dropzone} ${isDragging ? styles.dropzoneActive : ''}`}
           onDragOver={(e) => {
@@ -183,9 +179,9 @@ export default function PdfPasswordTool() {
         >
           <div className={styles.dropzoneContent}>
             <span className={styles.dropzoneIcon}><ToolIcon name="lock" size={32} /></span>
-            <p className={styles.dropzoneTitle}>Drop PDF to password-protect</p>
-            <p className={styles.dropzoneSubtitle}>PDF • Max 200MB</p>
-            <button className={styles.uploadButton}>Choose File</button>
+            <p className={styles.dropzoneTitle}>{t('pdfPassword.dropTitle')}</p>
+            <p className={styles.dropzoneSubtitle}>{t('pdfPassword.dropSubtitle')}</p>
+            <button className={styles.uploadButton}>{t('pdfPassword.chooseFile')}</button>
           </div>
           <input
             ref={fileInputRef}
@@ -200,14 +196,15 @@ export default function PdfPasswordTool() {
           />
         </div>
       ) : (
-        /* Password form */
         <>
           <div className={styles.fileCard}>
             <span className={styles.fileIcon}>📄</span>
             <div className={styles.fileInfo}>
               <span className={styles.fileName}>{file.name}</span>
               <span className={styles.fileMeta}>
-                {formatSize(file.size)} · {pageCount} {pageCount === 1 ? 'page' : 'pages'}
+                {formatSize(file.size)} · {pageCount === 1
+                  ? t('pdfPassword.page', { count: String(pageCount) })
+                  : t('pdfPassword.pages', { count: String(pageCount) })}
               </span>
             </div>
             <button className={styles.removeButton} onClick={handleReset}>×</button>
@@ -215,23 +212,23 @@ export default function PdfPasswordTool() {
 
           <div className={styles.passwordForm}>
             <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Password</label>
+              <label className={styles.inputLabel}>{t('pdfPassword.password')}</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password (min 4 characters)"
+                placeholder={t('pdfPassword.passwordPlaceholder')}
                 className={styles.passwordInput}
                 autoFocus
               />
             </div>
             <div className={styles.inputGroup}>
-              <label className={styles.inputLabel}>Confirm Password</label>
+              <label className={styles.inputLabel}>{t('pdfPassword.confirmPassword')}</label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                placeholder="Re-enter password"
+                placeholder={t('pdfPassword.confirmPlaceholder')}
                 className={styles.passwordInput}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') handleProtect();
@@ -249,7 +246,7 @@ export default function PdfPasswordTool() {
               disabled={!password || !confirmPassword || status === 'loading'}
               style={{ width: '100%' }}
             >
-              <ToolIcon name="lock" size={14} /> Protect PDF →
+              <ToolIcon name="lock" size={14} /> {t('pdfPassword.protectButton')}
             </button>
           </div>
         </>

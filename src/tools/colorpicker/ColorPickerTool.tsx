@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './ColorPickerTool.module.css';
 
 function hexToRgb(hex: string): [number, number, number] | null {
@@ -27,6 +28,7 @@ function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
 }
 
 export default function ColorPickerTool() {
+  const { t } = useLocale();
   const [hex, setHex] = useState('#3B82F6');
   const [copied, setCopied] = useState('');
   const pickerRef = useRef<HTMLInputElement>(null);
@@ -93,7 +95,7 @@ export default function ColorPickerTool() {
               <code className={styles.formatValue}>{f.value}</code>
               <button className={styles.copyBtn}
                 onClick={() => handleCopy(f.value, f.label)}>
-                {copied === f.label ? '✓' : 'Copy'}
+                {copied === f.label ? t('colorPicker.copied') : t('colorPicker.copy')}
               </button>
             </div>
           ))}

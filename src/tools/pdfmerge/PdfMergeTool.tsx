@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import ToolSuccess from '@/components/ToolSuccess';
 import ToolIcon from '@/components/ui/ToolIcon';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './PdfMergeTool.module.css';
 
 interface PdfFileEntry {
@@ -15,6 +16,7 @@ interface PdfFileEntry {
 }
 
 export default function PdfMergeTool() {
+  const { t, localizedHref } = useLocale();
   const [files, setFiles] = useState<PdfFileEntry[]>([]);
   const [status, setStatus] = useState<'idle' | 'loading' | 'merging' | 'done' | 'error'>('idle');
   const [statusText, setStatusText] = useState('');
@@ -30,7 +32,7 @@ export default function PdfMergeTool() {
     if (pdfFiles.length === 0) return;
 
     setStatus('loading');
-    setStatusText('Reading PDFs...');
+    setStatusText(t('pdfMerge.reading'));
 
     const entries: PdfFileEntry[] = [];
     for (const file of pdfFiles) {
@@ -58,7 +60,7 @@ export default function PdfMergeTool() {
     setFiles(prev => [...prev, ...entries]);
     setStatus('idle');
     setStatusText('');
-  }, []);
+  }, [t]);
 
   const removeFile = useCallback((id: string) => {
     setFiles(prev => prev.filter(f => f.id !== id));
@@ -94,13 +96,13 @@ export default function PdfMergeTool() {
     if (files.length < 2) return;
 
     setStatus('merging');
-    setStatusText(`Merging ${files.length} files...`);
+    setStatusText(t('pdfMerge.mergingFiles', { count: String(files.length) }));
 
     try {
       const mergedDoc = await PDFDocument.create();
 
       for (let i = 0; i < files.length; i++) {
-        setStatusText(`Merging file ${i + 1} of ${files.length}...`);
+        setStatusText(t('pdfMerge.mergingProgress', { current: String(i + 1), total: String(files.length) }));
         const buffer = await files[i].file.arrayBuffer();
         const srcDoc = await PDFDocument.load(buffer, { ignoreEncryption: true });
         const pages = await mergedDoc.copyPages(srcDoc, srcDoc.getPageIndices());
@@ -115,12 +117,12 @@ export default function PdfMergeTool() {
       setResultUrl(url);
       setResultFile(outputFile);
       setStatus('done');
-      setStatusText('Done!');
+      setStatusText(t('tool.done'));
     } catch (err: any) {
       setStatus('error');
-      setStatusText(err.message || 'Merge failed');
+      setStatusText(err.message || t('tool.error'));
     }
-  }, [files]);
+  }, [files, t]);
 
   const handleDownload = useCallback(() => {
     if (!resultUrl || !resultFile) return;
@@ -156,7 +158,7 @@ export default function PdfMergeTool() {
         <div className={styles.resultSection}>
           <div className={styles.resultSummary}>
             <div className={styles.resultIcon}>✓</div>
-            <h3>{files.length} files merged → {totalPages} pages</h3>
+            <h3>{t('pdfMerge.resultSummary', { fileCount: String(files.length), pageCount: String(totalPages) })}</h3>
             <p>{formatSize(resultFile.size)}</p>
           </div>
           <ToolSuccess
@@ -164,11 +166,11 @@ export default function PdfMergeTool() {
             sourceTool="pdf_merge"
             onDownload={handleDownload}
             crossLinks={[
-              { icon: '✂️', label: 'Split this PDF', href: '/pdf/split' },
+              { icon: '✂️', label: t('pdfMerge.splitLink'), href: localizedHref('/pdf/split') },
             ]}
           />
           <button className={styles.resetButton} onClick={handleReset}>
-            Merge more files
+            {t('pdfMerge.mergeMore')}
           </button>
         </div>
       </div>
@@ -193,9 +195,9 @@ export default function PdfMergeTool() {
     return (
       <div className={styles.container}>
         <div className={styles.errorSection}>
-          <p className={styles.errorText}>Error: {statusText}</p>
+          <p className={styles.errorText}>{statusText}</p>
           <button className={styles.resetButton} onClick={handleReset}>
-            Try again
+            {t('pdfMerge.tryAgain')}
           </button>
         </div>
       </div>
@@ -214,9 +216,9 @@ export default function PdfMergeTool() {
       >
         <span className={styles.dropzoneIcon}><ToolIcon name="file-plus" size={32} /></span>
         <p className={styles.dropzoneTitle}>
-          {files.length === 0 ? 'Drop PDFs to merge' : 'Add more PDFs'}
+          {files.length === 0 ? t('pdfMerge.dropTitle') : t('pdfMerge.dropTitleMore')}
         </p>
-        <p className={styles.dropzoneSubtitle}>PDF files only</p>
+        <p className={styles.dropzoneSubtitle}>{t('pdfMerge.dropSubtitle')}</p>
         <input
           ref={fileInputRef}
           type="file"
@@ -246,7 +248,10 @@ export default function PdfMergeTool() {
                 <div className={styles.fileInfo}>
                   <span className={styles.fileName}>{entry.name}</span>
                   <span className={styles.fileMeta}>
-                    {entry.pageCount !== null ? `${entry.pageCount} pages` : 'Unknown'} · {formatSize(entry.size)}
+                    {entry.pageCount !== null
+                      ? t('pdfMerge.pages', { count: String(entry.pageCount) })
+                      : t('pdfMerge.pageUnknown')
+                    } · {formatSize(entry.size)}
                   </span>
                 </div>
                 <button
@@ -261,14 +266,14 @@ export default function PdfMergeTool() {
 
           <div className={styles.mergeBar}>
             <span className={styles.totalPages}>
-              {files.length} files · {totalPages} pages
+              {t('pdfMerge.fileSummary', { fileCount: String(files.length), pageCount: String(totalPages) })}
             </span>
             <button
               className="btn btn-primary btn-lg"
               onClick={handleMerge}
               disabled={files.length < 2}
             >
-              Merge {files.length} PDFs →
+              {t('pdfMerge.mergeButton', { count: String(files.length) })}
             </button>
           </div>
         </>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './HashGeneratorTool.module.css';
 
 type Algorithm = 'SHA-1' | 'SHA-256' | 'SHA-384' | 'SHA-512';
@@ -14,6 +15,7 @@ async function computeHash(text: string, algo: Algorithm): Promise<string> {
 }
 
 export default function HashGeneratorTool() {
+  const { t } = useLocale();
   const [input, setInput] = useState('');
   const [results, setResults] = useState<Record<Algorithm, string>>({
     'SHA-1': '', 'SHA-256': '', 'SHA-384': '', 'SHA-512': '',
@@ -39,8 +41,8 @@ export default function HashGeneratorTool() {
     <div className={styles.container}>
       <textarea className={styles.input} value={input}
         onChange={e => setInput(e.target.value)}
-        placeholder="Type or paste text to hash..." rows={4} />
-      <button className="btn btn-primary" onClick={handleGenerate}>Generate Hashes</button>
+        placeholder={t('hashGenerator.placeholder')} rows={4} />
+      <button className="btn btn-primary" onClick={handleGenerate}>{t('hashGenerator.generate')}</button>
 
       {results['SHA-256'] && (
         <div className={styles.results}>
@@ -49,7 +51,7 @@ export default function HashGeneratorTool() {
               <span className={styles.algoLabel}>{algo}</span>
               <code className={styles.hashValue}>{results[algo]}</code>
               <button className={styles.copyBtn} onClick={() => handleCopy(algo)}>
-                {copied === algo ? '✓' : 'Copy'}
+                {copied === algo ? t('hashGenerator.copied') : t('hashGenerator.copy')}
               </button>
             </div>
           ))}

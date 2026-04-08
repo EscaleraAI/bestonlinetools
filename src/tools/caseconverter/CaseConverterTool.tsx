@@ -1,18 +1,10 @@
 'use client';
 
 import { useState, useCallback } from 'react';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './CaseConverterTool.module.css';
 
 type CaseType = 'upper' | 'lower' | 'title' | 'sentence' | 'alternating' | 'inverse';
-
-const CASES: { value: CaseType; label: string }[] = [
-  { value: 'upper', label: 'UPPER CASE' },
-  { value: 'lower', label: 'lower case' },
-  { value: 'title', label: 'Title Case' },
-  { value: 'sentence', label: 'Sentence case' },
-  { value: 'alternating', label: 'aLtErNaTiNg' },
-  { value: 'inverse', label: 'iNVERSE' },
-];
 
 function convert(text: string, type: CaseType): string {
   switch (type) {
@@ -27,8 +19,18 @@ function convert(text: string, type: CaseType): string {
 }
 
 export default function CaseConverterTool() {
+  const { t } = useLocale();
   const [text, setText] = useState('');
   const [copied, setCopied] = useState('');
+
+  const CASES: { value: CaseType; key: string }[] = [
+    { value: 'upper', key: 'caseConverter.upper' },
+    { value: 'lower', key: 'caseConverter.lower' },
+    { value: 'title', key: 'caseConverter.title' },
+    { value: 'sentence', key: 'caseConverter.sentence' },
+    { value: 'alternating', key: 'caseConverter.alternating' },
+    { value: 'inverse', key: 'caseConverter.inverse' },
+  ];
 
   const handleConvert = useCallback((type: CaseType) => {
     setText(prev => convert(prev, type));
@@ -36,9 +38,9 @@ export default function CaseConverterTool() {
 
   const handleCopy = useCallback(() => {
     navigator.clipboard.writeText(text);
-    setCopied('Copied!');
+    setCopied(t('caseConverter.copied'));
     setTimeout(() => setCopied(''), 1500);
-  }, [text]);
+  }, [text, t]);
 
   return (
     <div className={styles.container}>
@@ -46,21 +48,21 @@ export default function CaseConverterTool() {
         className={styles.textArea}
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Type or paste your text here..."
+        placeholder={t('caseConverter.placeholder')}
         rows={10}
       />
       <div className={styles.buttonGrid}>
         {CASES.map(c => (
           <button key={c.value} className={styles.caseBtn} onClick={() => handleConvert(c.value)}>
-            {c.label}
+            {t(c.key as Parameters<typeof t>[0])}
           </button>
         ))}
       </div>
       <div className={styles.actionBar}>
-        <span className={styles.charCount}>{text.length} characters</span>
+        <span className={styles.charCount}>{t('caseConverter.characters', { count: String(text.length) })}</span>
         <div className={styles.actions}>
-          <button className={styles.actionBtn} onClick={() => setText('')}>Clear</button>
-          <button className={styles.actionBtn} onClick={handleCopy}>{copied || 'Copy'}</button>
+          <button className={styles.actionBtn} onClick={() => setText('')}>{t('caseConverter.clear')}</button>
+          <button className={styles.actionBtn} onClick={handleCopy}>{copied || t('caseConverter.copy')}</button>
         </div>
       </div>
     </div>

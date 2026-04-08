@@ -4,6 +4,7 @@ import { useState, useRef, useCallback } from 'react';
 import { PDFDocument } from 'pdf-lib';
 import ToolSuccess from '@/components/ToolSuccess';
 import ToolIcon from '@/components/ui/ToolIcon';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './ImagesToPdfTool.module.css';
 
 interface ImageEntry {
@@ -24,6 +25,7 @@ const PAGE_SIZES: Record<string, { label: string; width: number; height: number 
 };
 
 export default function ImagesToPdfTool() {
+  const { t, localizedHref } = useLocale();
   const [images, setImages] = useState<ImageEntry[]>([]);
   const [pageSize, setPageSize] = useState<PageSize>('fit');
   const [status, setStatus] = useState<'idle' | 'loading' | 'converting' | 'done' | 'error'>('idle');
@@ -47,28 +49,19 @@ export default function ImagesToPdfTool() {
   const addFiles = useCallback(async (newFiles: FileList | File[]) => {
     const imageFiles = Array.from(newFiles).filter(f => f.type.startsWith('image/'));
     if (imageFiles.length === 0) return;
-
     setStatus('loading');
-    setStatusText(`Loading ${imageFiles.length} image${imageFiles.length > 1 ? 's' : ''}...`);
-
+    setStatusText(t('imagesToPdf.loading', { count: String(imageFiles.length) }));
     const entries: ImageEntry[] = [];
     for (const file of imageFiles) {
       const { width, height, preview } = await loadImageDimensions(file);
       entries.push({
         id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-        file,
-        name: file.name,
-        size: file.size,
-        preview,
-        width,
-        height,
+        file, name: file.name, size: file.size, preview, width, height,
       });
     }
-
     setImages(prev => [...prev, ...entries]);
-    setStatus('idle');
-    setStatusText('');
-  }, []);
+    setStatus('idle'); setStatusText('');
+  }, [t]);
 
   const removeImage = useCallback((id: string) => {
     setImages(prev => {
@@ -78,7 +71,6 @@ export default function ImagesToPdfTool() {
     });
   }, []);
 
-  // Drag-and-drop reorder
   const handleDragStart = (index: number) => { dragItemRef.current = index; };
   const handleDragOver = (e: React.DragEvent, index: number) => { e.preventDefault(); setDragOverIndex(index); };
   const handleDrop = (index: number) => {
@@ -87,117 +79,72 @@ export default function ImagesToPdfTool() {
     const [dragged] = updated.splice(dragItemRef.current, 1);
     updated.splice(index, 0, dragged);
     setImages(updated);
-    dragItemRef.current = null;
-    setDragOverIndex(null);
+    dragItemRef.current = null; setDragOverIndex(null);
   };
   const handleDragEnd = () => { dragItemRef.current = null; setDragOverIndex(null); };
 
-  // Convert images to PDF
   const handleConvert = useCallback(async () => {
     if (images.length === 0) return;
-
     setStatus('converting');
-    setStatusText(`Converting ${images.length} images to PDF...`);
-
+    setStatusText(t('imagesToPdf.converting', { count: String(images.length) }));
     try {
       const pdfDoc = await PDFDocument.create();
-
       for (let i = 0; i < images.length; i++) {
-        setStatusText(`Processing image ${i + 1} of ${images.length}...`);
+        setStatusText(t('imagesToPdf.processing', { current: String(i + 1), total: String(images.length) }));
         const entry = images[i];
         const buffer = await entry.file.arrayBuffer();
         const bytes = new Uint8Array(buffer);
-
-        // Embed image based on type
         let embedded;
         if (entry.file.type === 'image/png') {
           embedded = await pdfDoc.embedPng(bytes);
+        } else if (entry.file.type === 'image/jpeg' || entry.file.type === 'image/jpg') {
+          embedded = await pdfDoc.embedJpg(bytes);
         } else {
-          // For JPG and other formats, convert to JPG via canvas
-          if (entry.file.type === 'image/jpeg' || entry.file.type === 'image/jpg') {
-            embedded = await pdfDoc.embedJpg(bytes);
-          } else {
-            // Convert non-PNG/JPG to PNG via canvas
-            const canvas = document.createElement('canvas');
-            canvas.width = entry.width;
-            canvas.height = entry.height;
-            const ctx = canvas.getContext('2d')!;
-            const img = new window.Image();
-            await new Promise<void>((resolve) => {
-              img.onload = () => { ctx.drawImage(img, 0, 0); resolve(); };
-              img.src = entry.preview;
-            });
-            const pngBlob = await new Promise<Blob>((resolve) => {
-              canvas.toBlob(blob => resolve(blob!), 'image/png');
-            });
-            const pngBytes = new Uint8Array(await pngBlob.arrayBuffer());
-            embedded = await pdfDoc.embedPng(pngBytes);
-          }
+          const canvas = document.createElement('canvas');
+          canvas.width = entry.width; canvas.height = entry.height;
+          const ctx = canvas.getContext('2d')!;
+          const img = new window.Image();
+          await new Promise<void>((resolve) => { img.onload = () => { ctx.drawImage(img, 0, 0); resolve(); }; img.src = entry.preview; });
+          const pngBlob = await new Promise<Blob>((resolve) => { canvas.toBlob(blob => resolve(blob!), 'image/png'); });
+          const pngBytes = new Uint8Array(await pngBlob.arrayBuffer());
+          embedded = await pdfDoc.embedPng(pngBytes);
         }
-
-        // Calculate page dimensions
-        let pageWidth: number;
-        let pageHeight: number;
-
-        if (pageSize === 'fit') {
-          // Page matches image dimensions (72 DPI = 1 point per pixel ratio)
-          pageWidth = embedded.width;
-          pageHeight = embedded.height;
-        } else {
-          const preset = PAGE_SIZES[pageSize];
-          pageWidth = preset.width;
-          pageHeight = preset.height;
-        }
-
+        let pageWidth: number; let pageHeight: number;
+        if (pageSize === 'fit') { pageWidth = embedded.width; pageHeight = embedded.height; }
+        else { const preset = PAGE_SIZES[pageSize]; pageWidth = preset.width; pageHeight = preset.height; }
         const page = pdfDoc.addPage([pageWidth, pageHeight]);
-
         if (pageSize === 'fit') {
           page.drawImage(embedded, { x: 0, y: 0, width: pageWidth, height: pageHeight });
         } else {
-          // Fit image within page with margins
-          const margin = 36; // 0.5 inch
-          const maxW = pageWidth - margin * 2;
-          const maxH = pageHeight - margin * 2;
+          const margin = 36;
+          const maxW = pageWidth - margin * 2; const maxH = pageHeight - margin * 2;
           const scale = Math.min(maxW / embedded.width, maxH / embedded.height, 1);
-          const drawW = embedded.width * scale;
-          const drawH = embedded.height * scale;
-          const x = (pageWidth - drawW) / 2;
-          const y = (pageHeight - drawH) / 2;
+          const drawW = embedded.width * scale; const drawH = embedded.height * scale;
+          const x = (pageWidth - drawW) / 2; const y = (pageHeight - drawH) / 2;
           page.drawImage(embedded, { x, y, width: drawW, height: drawH });
         }
       }
-
       const pdfBytes = await pdfDoc.save();
       const blob = new Blob([new Uint8Array(pdfBytes) as BlobPart], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       const outputFile = new File([blob], 'images.pdf', { type: 'application/pdf' });
-
-      setResultUrl(url);
-      setResultFile(outputFile);
-      setStatus('done');
-      setStatusText('Done!');
+      setResultUrl(url); setResultFile(outputFile); setStatus('done');
     } catch (err: unknown) {
       setStatus('error');
-      setStatusText(err instanceof Error ? err.message : 'Conversion failed');
+      setStatusText(err instanceof Error ? err.message : t('imagesToPdf.conversionError'));
     }
-  }, [images, pageSize]);
+  }, [images, pageSize, t]);
 
   const handleDownload = useCallback(() => {
     if (!resultUrl || !resultFile) return;
-    const a = document.createElement('a');
-    a.href = resultUrl;
-    a.download = resultFile.name;
-    a.click();
+    const a = document.createElement('a'); a.href = resultUrl; a.download = resultFile.name; a.click();
   }, [resultUrl, resultFile]);
 
   const handleReset = useCallback(() => {
     if (resultUrl) URL.revokeObjectURL(resultUrl);
     images.forEach(img => URL.revokeObjectURL(img.preview));
-    setImages([]);
-    setResultUrl(null);
-    setResultFile(null);
-    setStatus('idle');
-    setStatusText('');
+    setImages([]); setResultUrl(null); setResultFile(null);
+    setStatus('idle'); setStatusText('');
   }, [resultUrl, images]);
 
   const formatSize = (bytes: number) => {
@@ -206,28 +153,20 @@ export default function ImagesToPdfTool() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  // --- RENDER ---
-
   if (status === 'done' && resultFile) {
     return (
       <div className={styles.container}>
         <div className={styles.resultSection}>
           <div className={styles.resultSummary}>
             <div className={styles.resultIcon}>✓</div>
-            <h3>{images.length} images → PDF ({formatSize(resultFile.size)})</h3>
+            <h3>{t('imagesToPdf.success', { count: String(images.length), size: formatSize(resultFile.size) })}</h3>
           </div>
-          <ToolSuccess
-            outputFiles={[resultFile]}
-            sourceTool="images_to_pdf"
-            onDownload={handleDownload}
+          <ToolSuccess outputFiles={[resultFile]} sourceTool="images_to_pdf" onDownload={handleDownload}
             crossLinks={[
-              { icon: '🔒', label: 'Password protect this PDF', href: '/pdf/password-protect' },
-              { icon: '✂️', label: 'Split this PDF', href: '/pdf/split' },
-            ]}
-          />
-          <button className={styles.resetButton} onClick={handleReset}>
-            Convert more images
-          </button>
+              { icon: '🔒', label: t('imagesToPdf.passwordLink'), href: localizedHref('/pdf/password-protect') },
+              { icon: '✂️', label: t('imagesToPdf.splitLink'), href: localizedHref('/pdf/split') },
+            ]} />
+          <button className={styles.resetButton} onClick={handleReset}>{t('imagesToPdf.convertMore')}</button>
         </div>
       </div>
     );
@@ -249,8 +188,8 @@ export default function ImagesToPdfTool() {
     return (
       <div className={styles.container}>
         <div className={styles.errorSection}>
-          <p className={styles.errorText}>Error: {statusText}</p>
-          <button className={styles.resetButton} onClick={handleReset}>Try again</button>
+          <p className={styles.errorText}>{statusText}</p>
+          <button className={styles.resetButton} onClick={handleReset}>{t('imagesToPdf.tryAgain')}</button>
         </div>
       </div>
     );
@@ -258,88 +197,61 @@ export default function ImagesToPdfTool() {
 
   return (
     <div className={styles.container}>
-      {/* Dropzone */}
-      <div
-        className={styles.dropzone}
+      <div className={styles.dropzone}
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => { e.preventDefault(); addFiles(e.dataTransfer.files); }}
-        onClick={() => fileInputRef.current?.click()}
-      >
+        onClick={() => fileInputRef.current?.click()}>
         <span className={styles.dropzoneIcon}><ToolIcon name="image-plus" size={32} /></span>
         <p className={styles.dropzoneTitle}>
-          {images.length === 0 ? 'Drop images to convert to PDF' : 'Add more images'}
+          {images.length === 0 ? t('imagesToPdf.dropTitle') : t('imagesToPdf.dropTitleMore')}
         </p>
-        <p className={styles.dropzoneSubtitle}>Supports JPG, PNG, WebP, BMP, GIF</p>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          multiple
+        <p className={styles.dropzoneSubtitle}>{t('imagesToPdf.dropSubtitle')}</p>
+        <input ref={fileInputRef} type="file" accept="image/*" multiple
           onChange={(e) => { if (e.target.files) addFiles(e.target.files); }}
-          className={styles.hiddenInput}
-        />
+          className={styles.hiddenInput} />
       </div>
 
-      {/* Image list + settings */}
       {images.length > 0 && (
         <>
-          {/* Thumbnails */}
           <div className={styles.imageGrid}>
             {images.map((entry, index) => (
-              <div
-                key={entry.id}
+              <div key={entry.id}
                 className={`${styles.imageItem} ${dragOverIndex === index ? styles.imageItemDragOver : ''}`}
                 draggable
                 onDragStart={() => handleDragStart(index)}
                 onDragOver={(e) => handleDragOver(e, index)}
                 onDrop={() => handleDrop(index)}
-                onDragEnd={handleDragEnd}
-              >
+                onDragEnd={handleDragEnd}>
                 <span className={styles.imageIndex}>{index + 1}</span>
                 <img src={entry.preview} alt={entry.name} className={styles.thumbnail} />
                 <div className={styles.imageInfo}>
                   <span className={styles.imageName}>{entry.name}</span>
-                  <span className={styles.imageMeta}>
-                    {entry.width}×{entry.height} · {formatSize(entry.size)}
-                  </span>
+                  <span className={styles.imageMeta}>{entry.width}×{entry.height} · {formatSize(entry.size)}</span>
                 </div>
-                <button
-                  className={styles.removeButton}
-                  onClick={(e) => { e.stopPropagation(); removeImage(entry.id); }}
-                >
-                  ×
-                </button>
+                <button className={styles.removeButton} onClick={(e) => { e.stopPropagation(); removeImage(entry.id); }}>×</button>
               </div>
             ))}
           </div>
 
-          {/* Settings + Convert bar */}
           <div className={styles.convertBar}>
             <div className={styles.settings}>
-              <label className={styles.settingLabel}>Page Size</label>
-              <select
-                className={styles.select}
-                value={pageSize}
-                onChange={(e) => setPageSize(e.target.value as PageSize)}
-              >
-                <option value="fit">Fit to Image</option>
+              <label className={styles.settingLabel}>{t('imagesToPdf.pageSize')}</label>
+              <select className={styles.select} value={pageSize} onChange={(e) => setPageSize(e.target.value as PageSize)}>
+                <option value="fit">{t('imagesToPdf.fitToImage')}</option>
                 <option value="a4">A4 (210 × 297 mm)</option>
                 <option value="letter">Letter (8.5 × 11 in)</option>
               </select>
             </div>
-            <button
-              className="btn btn-primary btn-lg"
-              onClick={handleConvert}
-            >
-              Convert {images.length} {images.length === 1 ? 'Image' : 'Images'} to PDF →
+            <button className="btn btn-primary btn-lg" onClick={handleConvert}>
+              {images.length === 1
+                ? t('imagesToPdf.convertButtonSingle')
+                : t('imagesToPdf.convertButton', { count: String(images.length) })}
             </button>
           </div>
         </>
       )}
 
-      {status === 'loading' && (
-        <p className={styles.statusText}>{statusText}</p>
-      )}
+      {status === 'loading' && <p className={styles.statusText}>{statusText}</p>}
     </div>
   );
 }

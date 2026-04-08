@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useCallback, useMemo } from 'react';
+import { useLocale } from '@/lib/i18n/LocaleContext';
 import styles from './RegexTesterTool.module.css';
 
 export default function RegexTesterTool() {
+  const { t } = useLocale();
   const [pattern, setPattern] = useState('');
   const [flags, setFlags] = useState('g');
   const [testString, setTestString] = useState('');
@@ -19,7 +21,7 @@ export default function RegexTesterTool() {
       if (flags.includes('g')) {
         while ((m = re.exec(testString)) !== null) {
           results.push({ match: m[0], index: m.index, groups: m.groups });
-          if (!m[0]) break; // prevent infinite loop on zero-length match
+          if (!m[0]) break;
         }
       } else {
         m = re.exec(testString);
@@ -32,35 +34,29 @@ export default function RegexTesterTool() {
     }
   }, [pattern, flags, testString]);
 
-  const highlightedText = useMemo(() => {
-    if (!pattern || !testString || error) return testString;
-    try {
-      const re = new RegExp(pattern, flags.includes('g') ? flags : flags + 'g');
-      return testString.replace(re, match => `{{MATCH_START}}${match}{{MATCH_END}}`);
-    } catch {
-      return testString;
-    }
-  }, [pattern, flags, testString, error]);
-
   return (
     <div className={styles.container}>
       <div className={styles.patternRow}>
         <span className={styles.slash}>/</span>
         <input className={styles.patternInput} value={pattern}
-          onChange={e => setPattern(e.target.value)} placeholder="your regex here" />
+          onChange={e => setPattern(e.target.value)} placeholder={t('regexTester.patternPlaceholder')} />
         <span className={styles.slash}>/</span>
         <input className={styles.flagsInput} value={flags}
-          onChange={e => setFlags(e.target.value)} placeholder="gi" maxLength={6} />
+          onChange={e => setFlags(e.target.value)} placeholder={t('regexTester.flagsPlaceholder')} maxLength={6} />
       </div>
       {error && <p className={styles.error}>{error}</p>}
 
       <textarea className={styles.testArea} value={testString}
         onChange={e => setTestString(e.target.value)}
-        placeholder="Enter test string..." rows={6} />
+        placeholder={t('regexTester.testPlaceholder')} rows={6} />
 
       {matches.length > 0 && (
         <div className={styles.matchSection}>
-          <span className={styles.matchCount}>{matches.length} match{matches.length !== 1 ? 'es' : ''}</span>
+          <span className={styles.matchCount}>
+            {matches.length === 1
+              ? t('regexTester.matchCount', { count: '1' })
+              : t('regexTester.matchCountPlural', { count: String(matches.length) })}
+          </span>
           <div className={styles.matchList}>
             {matches.map((m, i) => (
               <div key={i} className={styles.matchItem}>
